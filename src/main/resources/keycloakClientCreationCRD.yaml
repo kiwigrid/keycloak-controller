@@ -1,19 +1,3 @@
-# keycloak-client-controller
-
-[![Build Status](https://travis-ci.org/kiwigrid/keycloak-client-controller.svg?branch=master)](https://travis-ci.org/kiwigrid/keycloak-client-controller)
-
-This controller manage Keycloak clients over Kubernetes resources and creates a Kubernetes secret with 
-the `clientSecret` for clients of type `confidential`.
-
-## Setup
-
-Before deploying the controller, create the [CustomResourceDefinition](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/)
-
-```bash
-kubectl apply -f keycloakClientCreationCRD.yaml
-```
-
-```yaml
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -64,22 +48,3 @@ spec:
           type: object
         status:
           type: object
-```
-
-## Examples
-
-```yaml
-apiVersion: k8s.kiwigrid.com/v1beta1
-kind: KeycloakClientRegistration
-metadata:
-  name: kcr-sample
-spec:
-  realm: master
-  clientId: client-example
-  accessType: confidential
-  serviceAccountsEnabled: true
-  redirectUris:
-    - "*"
-  webOrigins:
-    - "*"
-```

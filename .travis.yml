@@ -1,0 +1,15 @@
+language: java
+jdk: openjdk11
+
+env:
+  - IMG=kiwigrid/keycloak-client-controller
+
+deploy:
+  - provider: script
+    script: bash .travis/deploy.sh
+    on:
+      branch: master
+  - provider: script
+    script: bash .travis/deploy.sh $TRAVIS_TAG
+    on:
+      tags: true
