@@ -1,0 +1,11 @@
+micronaut:
+    application:
+        name: keycloak-client-controller
+
+registrar:
+  keycloak-user: hupe
+  keycloakUser: haha
+  keycloak:
+    url: https://keycloak.example.com/auth/
+    user: admin
+    pwd: adminPwd
