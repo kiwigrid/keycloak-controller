@@ -2,19 +2,22 @@ package com.kiwigrid.keycloak.client.controller.keycloak;
 
 import java.util.List;
 
-import com.kiwigrid.keycloak.client.controller.exception.ClientConflictException;
-import com.kiwigrid.keycloak.client.controller.exception.ClientRegistrationException;
-import com.kiwigrid.keycloak.client.controller.exception.RetrieveClientRepresenationException;
-import io.micronaut.http.HttpStatus;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response;
+
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.ServerInfoResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.kiwigrid.keycloak.client.controller.exception.ClientConflictException;
+import com.kiwigrid.keycloak.client.controller.exception.ClientRegistrationException;
+import com.kiwigrid.keycloak.client.controller.exception.RetrieveClientRepresenationException;
+
+import io.micronaut.context.env.Environment;
+import io.micronaut.http.HttpStatus;
 
 @Singleton
 public class Registrar {
@@ -31,14 +34,14 @@ public class Registrar {
 	private final String adminUser;
 	private final String adminPwd;
 
-	@Inject
-	private RegistrarProperties props;
+	public Registrar(RegistrarProperties properties, Environment env) {
+		logger.trace("Properties: " + env.getProperties("registrar"));
 
-	public Registrar(RegistrarProperties properties) {
 		this.keycloakUrl = properties.getKeycloakUrl();
 		this.adminUser = properties.getKeycloakUser();
 		this.adminPwd = properties.getKeycloakPwd();
 
+		logger.trace(keycloakUrl + " " + adminUser + " " + adminPwd);
 //		verifyKeycloakConnection();
 	}
 

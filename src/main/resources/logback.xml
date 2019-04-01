@@ -8,7 +8,9 @@
         </encoder>
     </appender>
 
-	<logger name="com.kiwigrid" level="debug" />
+	<logger name="com.kiwigrid" level="trace" />
+ 	<logger name="io.micronaut" level="trace" />
+ 	<logger name="io.micronaut.context" level="INFO" />
 
     <root level="info">
         <appender-ref ref="STDOUT" />

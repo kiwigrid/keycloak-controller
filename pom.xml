@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.kiwigrid.controller</groupId>
@@ -8,14 +7,28 @@
 	<version>0.1</version>
 
 	<properties>
-		<version.micronaut>1.0.5</version.micronaut>
-		<version.jdk>1.8</version.jdk>
+
+		<version.micronaut>1.1.0.RC2</version.micronaut>
 		<version.keycloak>4.8.3.Final</version.keycloak>
 		<version.resteasy>3.6.3.Final</version.resteasy>
 		<version.k8s-client>4.0.0</version.k8s-client>
 		<version.lombok>1.18.6</version.lombok>
+		<version.com.spotify.ile>1.4.10</version.com.spotify.ile>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<exec.mainClass>com.kiwigrid.keycloak.client.controller.keycloak.client.controller.Application</exec.mainClass>
+
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.parameters>true</maven.compiler.parameters>
+
+		<dockerfile.contextDirectory>${project.build.directory}</dockerfile.contextDirectory>
+		<dockerfile.retryCount>0</dockerfile.retryCount>
+		<dockerfile.googleContainerRegistryEnabled>false</dockerfile.googleContainerRegistryEnabled>
+		<dockerfile.writeTestMetadata>false</dockerfile.writeTestMetadata>
+		<dockerfile.skipDockerInfo>true</dockerfile.skipDockerInfo>
+		<dockerfile.repository>docker.kiwigrid.com/${project.artifactId}</dockerfile.repository>
+		<dockerfile.tag>${project.version}</dockerfile.tag>
+
 	</properties>
 
 	<dependencyManagement>
@@ -29,37 +42,12 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<dependencies>
-		<dependency>
-			<groupId>io.micronaut</groupId>
-			<artifactId>micronaut-inject</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.micronaut</groupId>
-			<artifactId>micronaut-validation</artifactId>
-			<scope>compile</scope>
-		</dependency>
+
+		<!-- Micronaut -->
 		<dependency>
 			<groupId>io.micronaut</groupId>
 			<artifactId>micronaut-runtime</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.micronaut</groupId>
-			<artifactId>micronaut-http-client</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.micronaut</groupId>
-			<artifactId>micronaut-http-server-netty</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.micronaut</groupId>
-			<artifactId>micronaut-inject-java</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -67,18 +55,7 @@
 			<version>1.2.3</version>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>1.3</version>
-			<scope>test</scope>
-		</dependency>
+		
 		<!-- Keycloak -->
 		<dependency>
 			<groupId>org.keycloak</groupId>
@@ -95,68 +72,30 @@
 			<artifactId>resteasy-jackson2-provider</artifactId>
 			<version>${version.resteasy}</version>
 		</dependency>
+
 		<!-- k8s -->
 		<dependency>
 			<groupId>io.kubernetes</groupId>
 			<artifactId>client-java</artifactId>
 			<version>${version.k8s-client}</version>
-			<scope>compile</scope>
 		</dependency>
-		<!-- Misc -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+
+		<!-- Lazy Developer -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>${version.lombok}</version>
 			<scope>provided</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<transformers>
-								<transformer
-										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>${exec.mainClass}</mainClass>
-								</transformer>
-								<transformer
-										implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.6.0</version>
-				<configuration>
-					<executable>java</executable>
-					<arguments>
-						<argument>-noverify</argument>
-						<argument>-XX:TieredStopAtLevel=1</argument>
-						<argument>-classpath</argument>
-						<classpath/>
-						<argument>${exec.mainClass}</argument>
-					</arguments>
-				</configuration>
-			</plugin>
-		</plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -164,13 +103,12 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.7.0</version>
 					<configuration>
-						<source>${version.jdk}</source>
-						<target>${version.jdk}</target>
-						<encoding>UTF-8</encoding>
-						<compilerArgs>
-							<arg>-parameters</arg>
-						</compilerArgs>
 						<annotationProcessorPaths>
+							<path>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+								<version>${version.lombok}</version>
+							</path>
 							<path>
 								<groupId>io.micronaut</groupId>
 								<artifactId>micronaut-inject-java</artifactId>
@@ -181,45 +119,104 @@
 								<artifactId>micronaut-validation</artifactId>
 								<version>${version.micronaut}</version>
 							</path>
-							<path>
-								<groupId>org.projectlombok</groupId>
-								<artifactId>lombok</artifactId>
-								<version>${version.lombok}</version>
-							</path>
 						</annotationProcessorPaths>
 					</configuration>
-					<executions>
-						<execution>
-							<id>test-compile</id>
-							<goals>
-								<goal>testCompile</goal>
-							</goals>
-							<configuration>
-								<compilerArgs>
-									<arg>-parameters</arg>
-								</compilerArgs>
-								<annotationProcessorPaths>
-									<path>
-										<groupId>io.micronaut</groupId>
-										<artifactId>micronaut-inject-java</artifactId>
-										<version>${version.micronaut}</version>
-									</path>
-									<path>
-										<groupId>io.micronaut</groupId>
-										<artifactId>micronaut-validation</artifactId>
-										<version>${version.micronaut}</version>
-									</path>
-									<path>
-										<groupId>org.projectlombok</groupId>
-										<artifactId>lombok</artifactId>
-										<version>${version.lombok}</version>
-									</path>
-								</annotationProcessorPaths>
-							</configuration>
-						</execution>
-					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+
+			<!-- copy project dependencies -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<id>download</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeScope>runtime</includeScope>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<silent>true</silent>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- configure jar with lib and main class -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>com.kiwigrid.keycloak.client.controller.Application</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<!-- copy docker stuff -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/src/main/docker</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>${dockerfile.contextDirectory}</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- package docker stuff -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>${version.com.spotify.ile}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build</goal>
+							<goal>tag</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- fail if pom is dirty -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tidy-maven-plugin</artifactId>
+				<version>1.1.0</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
 	</build>
 </project>
