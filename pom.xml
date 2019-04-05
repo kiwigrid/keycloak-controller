@@ -131,6 +131,12 @@
 			<artifactId>kubernetes-server-mock</artifactId>
 			<version>${version.k8s-client}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun</groupId>
+					<artifactId>tools</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>
