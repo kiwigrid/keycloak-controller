@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -e
-docker build -t $IMG:latest .
+
+docker build -t $IMG:latest ./target
 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 docker push $IMG:latest
 

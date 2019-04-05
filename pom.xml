@@ -57,7 +57,7 @@
 		<dockerfile.googleContainerRegistryEnabled>false</dockerfile.googleContainerRegistryEnabled>
 		<dockerfile.writeTestMetadata>false</dockerfile.writeTestMetadata>
 		<dockerfile.skipDockerInfo>true</dockerfile.skipDockerInfo>
-		<dockerfile.repository>docker.kiwigrid.com/${project.artifactId}</dockerfile.repository>
+		<dockerfile.repository>kiwigrid/${project.artifactId}</dockerfile.repository>
 		<!-- Automated versioning for docker image, this is our shippable artifact -->
 		<dockerfile.tag>${git.commit.time}.${git.commit.id.abbrev}</dockerfile.tag>
 
@@ -260,12 +260,15 @@
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<version>${version.com.spotify.ile}</version>
+				<configuration>
+					<serverId>docker-hub</serverId>
+					<registryUrl>https://index.docker.io/v1/</registryUrl>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>build</goal>
 							<goal>tag</goal>
-							<goal>push</goal>
 						</goals>
 					</execution>
 				</executions>
