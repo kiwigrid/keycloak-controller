@@ -1,0 +1,9 @@
+micronaut:
+    application:
+        name: keycloak-client-controller
+
+registrar:
+  keycloak:
+    url: http://localhost:8080/auth/
+    user: admin
+    pwd: admin
