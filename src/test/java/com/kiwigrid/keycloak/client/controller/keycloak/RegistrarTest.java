@@ -7,8 +7,9 @@ import java.util.UUID;
 import com.kiwigrid.keycloak.client.controller.exception.ClientConflictException;
 import com.kiwigrid.keycloak.client.controller.exception.ClientRegistrationException;
 import com.kiwigrid.keycloak.client.controller.exception.RetrieveClientRepresenationException;
-import org.hamcrest.CoreMatchers;
-import org.junit.*;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.idm.ClientRepresentation;
@@ -16,7 +17,6 @@ import org.testcontainers.containers.GenericContainer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("WeakerAccess")
 public class RegistrarTest {
@@ -105,7 +105,9 @@ public class RegistrarTest {
 	}
 
 	@Test(expected = ClientConflictException.class)
-	public void createClientTwiceShouldThrowConflictException() throws ClientRegistrationException, ClientConflictException {
+	public void createClientTwiceShouldThrowConflictException()
+			throws ClientRegistrationException, ClientConflictException
+	{
 		ClientRepresentation client = new ClientRepresentation();
 		client.setClientId(UUID.randomUUID().toString());
 
