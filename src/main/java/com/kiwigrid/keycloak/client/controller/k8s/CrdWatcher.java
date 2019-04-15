@@ -5,6 +5,7 @@ import java.util.Base64;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kiwigrid.keycloak.client.controller.RegistrarHelper;
 import com.kiwigrid.keycloak.client.controller.exception.ClientConflictException;
 import com.kiwigrid.keycloak.client.controller.exception.ClientRegistrationException;
 import com.kiwigrid.keycloak.client.controller.exception.RetrieveClientRepresenationException;
@@ -90,30 +91,10 @@ public class CrdWatcher {
 		}
 	}
 
-	private void processAddedEvent(KeycloakClientRegistration resource) {
-		ClientRepresentation clientRepresentation = new ClientRepresentation();
-		KcrSpec kcrSpec = resource.getSpec();
-		clientRepresentation.setClientId(kcrSpec.getClientId());
-		clientRepresentation.setRedirectUris(kcrSpec.getRedirectUris());
-		clientRepresentation.setWebOrigins(kcrSpec.getWebOrigins());
-		clientRepresentation.setDescription("Created via keycloak-client-controller");
-
-		switch (kcrSpec.getAccessType()) {
-		case "confidential":
-			clientRepresentation.setPublicClient(false);
-			clientRepresentation.setBearerOnly(false);
-			clientRepresentation.setServiceAccountsEnabled(kcrSpec.isServiceAccountsEnabled());
-			break;
-		case "bearer-only":
-			clientRepresentation.setPublicClient(false);
-			clientRepresentation.setBearerOnly(true);
-			break;
-		case "public":
-			clientRepresentation.setPublicClient(true);
-			clientRepresentation.setBearerOnly(false);
-		default:
-			break;
-		}
+	private void processAddedEvent(KeycloakClientRegistration kcr) {
+		final KcrSpec kcrSpec = kcr.getSpec();
+		final ClientRepresentation clientRepresentation = RegistrarHelper.transformKeycloakClientRegistrationSpec(
+				kcrSpec);
 
 		try {
 			String clientConfig = registrar.register(kcrSpec.getRealm(), clientRepresentation);
@@ -121,7 +102,7 @@ public class CrdWatcher {
 			if ("confidential".equals(kcrSpec.getAccessType())) {
 				JsonNode jsonNode = new ObjectMapper().readTree(clientConfig);
 				String clientSecret = jsonNode.get("credentials").get("secret").textValue();
-				storeClientSecret(resource, clientSecret);
+				storeClientSecret(kcr, clientSecret);
 			}
 		} catch (ClientRegistrationException | ClientConflictException e) {
 			logger.error("Failed to create client [{}] in realm [{}]. Cause: {}",
