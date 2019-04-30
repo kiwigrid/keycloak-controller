@@ -4,6 +4,8 @@
 
 This controller manage Keycloak clients over Kubernetes resources and creates a Kubernetes secret with 
 the `clientSecret` for clients of type `confidential`.
+ 
+The secret will be named like the the `KeycloakClientRegistration` resource with suffix `-secret` (e.g. `kcr-sample-secret` from _Examples_ section)
 
 ## Setup
 
