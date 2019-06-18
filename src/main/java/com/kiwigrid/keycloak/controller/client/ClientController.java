@@ -1,4 +1,4 @@
-package com.kiwigrid.keycloak.client.controller.client;
+package com.kiwigrid.keycloak.controller.client;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -9,9 +9,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.kiwigrid.keycloak.client.controller.KubernetesController;
-import com.kiwigrid.keycloak.client.controller.client.ClientResource.*;
-import com.kiwigrid.keycloak.client.controller.keycloak.KeycloakController;
+import com.kiwigrid.keycloak.controller.KubernetesController;
+import com.kiwigrid.keycloak.controller.keycloak.KeycloakController;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
@@ -29,8 +28,8 @@ public class ClientController extends KubernetesController<ClientResource> {
 	final KeycloakController keycloak;
 
 	public ClientController(KeycloakController keycloak, KubernetesClient kubernetes) {
-		super(kubernetes, ClientResource.DEFINITION, ClientResource.class, ClientResourceList.class,
-				ClientResourceDoneable.class);
+		super(kubernetes, ClientResource.DEFINITION, ClientResource.class, ClientResource.ClientResourceList.class,
+				ClientResource.ClientResourceDoneable.class);
 		this.keycloak = keycloak;
 	}
 
@@ -161,7 +160,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 				});
 	}
 
-	boolean map(boolean create, ClientResourceSpec spec, ClientRepresentation client) {
+	boolean map(boolean create, ClientResource.ClientResourceSpec spec, ClientRepresentation client) {
 		var changed = false;
 
 		if (changed |= changed(create, spec, "name", spec.getName(), client.getName())) {
@@ -224,7 +223,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 		return changed;
 	}
 
-	boolean changed(boolean create, ClientResourceSpec spec, String name, Object specValue, Object clientValue) {
+	boolean changed(boolean create, ClientResource.ClientResourceSpec spec, String name, Object specValue, Object clientValue) {
 		boolean changed = specValue != null && !specValue.equals(clientValue);
 		if (changed) {
 			if (create) {
@@ -333,7 +332,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 		// remove obsolete mappers
 
-		var names = specMappers.stream().map(ClientMapper::getName).collect(Collectors.toSet());
+		var names = specMappers.stream().map(ClientResource.ClientMapper::getName).collect(Collectors.toSet());
 		for (var mapper : keycloakMappers) {
 			if (!names.contains(mapper.getName())) {
 				keycloakResource.delete(mapper.getId());
@@ -355,7 +354,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 		// remove obsolete roles
 
-		var specRoleNames = specRoles.stream().map(ClientRole::getName).collect(Collectors.toSet());
+		var specRoleNames = specRoles.stream().map(ClientResource.ClientRole::getName).collect(Collectors.toSet());
 		for (var clientRoleRepresentation : clientRoleRepresentations) {
 			if (!specRoleNames.contains(clientRoleRepresentation.getName())) {
 				clientRolesResource.deleteRole(clientRoleRepresentation.getName());

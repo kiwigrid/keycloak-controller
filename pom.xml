@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.kiwigrid.controller</groupId>
-	<artifactId>keycloak-client-controller</artifactId>
+	<artifactId>keycloak-controller</artifactId>
 	<version>1.0</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>
-		A Kubernetes controller for client managing in Keycloak.
+		A Kubernetes controller for managing clients and realms in Keycloak instances.
 	</description>
-	<url>https://github.com/kiwigrid/keycloak-client-controller</url>
+	<url>https://github.com/kiwigrid/keycloak-controller</url>
 	<organization>
 		<name>Kiwigrid GmbH</name>
 		<url>https://www.kiwigrid.com</url>
@@ -34,9 +34,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/kiwigrid/keycloak-client-controller.git</connection>
-		<developerConnection>scm:git:git@github.com:kiwigrid/keycloak-client-controller.git</developerConnection>
-		<url>https://github.com/kiwigrid/keycloak-client-controller/tree/master</url>
+		<connection>scm:git:git://github.com/kiwigrid/keycloak-controller.git</connection>
+		<developerConnection>scm:git:git@github.com:kiwigrid/keycloak-controller.git</developerConnection>
+		<url>https://github.com/kiwigrid/keycloak-controller/tree/master</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -287,7 +287,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.kiwigrid.keycloak.client.controller.Application</mainClass>
+							<mainClass>com.kiwigrid.keycloak.controller.Application</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

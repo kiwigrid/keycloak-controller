@@ -1,15 +1,15 @@
-package com.kiwigrid.keycloak.client.controller.realm;
+package com.kiwigrid.keycloak.controller.realm;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.kiwigrid.keycloak.client.controller.KubernetesController;
-import com.kiwigrid.keycloak.client.controller.keycloak.KeycloakController;
-import com.kiwigrid.keycloak.client.controller.realm.RealmResource.RealmResourceDoneable;
-import com.kiwigrid.keycloak.client.controller.realm.RealmResource.RealmResourceList;
-import com.kiwigrid.keycloak.client.controller.realm.RealmResource.RealmResourceSpec;
+import com.kiwigrid.keycloak.controller.KubernetesController;
+import com.kiwigrid.keycloak.controller.keycloak.KeycloakController;
+import com.kiwigrid.keycloak.controller.realm.RealmResource.RealmResourceDoneable;
+import com.kiwigrid.keycloak.controller.realm.RealmResource.RealmResourceList;
+import com.kiwigrid.keycloak.controller.realm.RealmResource.RealmResourceSpec;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;

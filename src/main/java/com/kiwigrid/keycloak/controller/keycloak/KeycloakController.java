@@ -1,13 +1,11 @@
-package com.kiwigrid.keycloak.client.controller.keycloak;
+package com.kiwigrid.keycloak.controller.keycloak;
 
 import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import com.kiwigrid.keycloak.client.controller.KubernetesController;
-import com.kiwigrid.keycloak.client.controller.keycloak.KeycloakResource.KeycloakResourceDoneable;
-import com.kiwigrid.keycloak.client.controller.keycloak.KeycloakResource.KeycloakResourceList;
+import com.kiwigrid.keycloak.controller.KubernetesController;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import javax.inject.Singleton;
 import javax.ws.rs.ProcessingException;
@@ -22,7 +20,7 @@ public class KeycloakController extends KubernetesController<KeycloakResource> {
 
 	public KeycloakController(KubernetesClient kubernetes) {
 		super(kubernetes, KeycloakResource.DEFINITION,
-				KeycloakResource.class, KeycloakResourceList.class, KeycloakResourceDoneable.class);
+				KeycloakResource.class, KeycloakResource.KeycloakResourceList.class, KeycloakResource.KeycloakResourceDoneable.class);
 	}
 
 	@Override

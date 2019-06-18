@@ -1,4 +1,4 @@
-package com.kiwigrid.keycloak.client.controller.keycloak;
+package com.kiwigrid.keycloak.controller.keycloak;
 
 import io.fabric8.kubernetes.api.builder.Function;
 import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;

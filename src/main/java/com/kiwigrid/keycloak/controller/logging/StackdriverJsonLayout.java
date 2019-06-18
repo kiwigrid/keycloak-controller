@@ -1,4 +1,4 @@
-package com.kiwigrid.keycloak.client.controller.logging;
+package com.kiwigrid.keycloak.controller.logging;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

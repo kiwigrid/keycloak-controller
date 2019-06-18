@@ -1,5 +1,5 @@
 profile: service
-defaultPackage: com.kiwigrid.keycloak.client.controller
+defaultPackage: com.kiwigrid.keycloak.controller
 ---
 testFramework: junit
 sourceLanguage: java

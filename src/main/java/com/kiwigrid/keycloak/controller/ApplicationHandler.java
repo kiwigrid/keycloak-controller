@@ -1,11 +1,11 @@
-package com.kiwigrid.keycloak.client.controller;
+package com.kiwigrid.keycloak.controller;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import com.kiwigrid.keycloak.client.controller.client.ClientController;
-import com.kiwigrid.keycloak.client.controller.keycloak.KeycloakController;
-import com.kiwigrid.keycloak.client.controller.realm.RealmController;
+import com.kiwigrid.keycloak.controller.client.ClientController;
+import com.kiwigrid.keycloak.controller.keycloak.KeycloakController;
+import com.kiwigrid.keycloak.controller.realm.RealmController;
 import io.fabric8.kubernetes.client.Watch;
 import io.micronaut.scheduling.annotation.Scheduled;
 import javax.annotation.PostConstruct;

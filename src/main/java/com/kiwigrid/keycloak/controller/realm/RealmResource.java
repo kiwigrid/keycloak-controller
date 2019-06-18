@@ -1,4 +1,4 @@
-package com.kiwigrid.keycloak.client.controller.realm;
+package com.kiwigrid.keycloak.controller.realm;
 
 import java.util.ArrayList;
 import java.util.List;

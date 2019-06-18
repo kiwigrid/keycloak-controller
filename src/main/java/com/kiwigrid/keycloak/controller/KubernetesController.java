@@ -1,4 +1,4 @@
-package com.kiwigrid.keycloak.client.controller;
+package com.kiwigrid.keycloak.controller;
 
 import java.util.HashMap;
 import java.util.Map;

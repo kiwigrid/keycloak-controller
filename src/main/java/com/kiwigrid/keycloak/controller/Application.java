@@ -1,4 +1,4 @@
-package com.kiwigrid.keycloak.client.controller;
+package com.kiwigrid.keycloak.controller;
 
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;

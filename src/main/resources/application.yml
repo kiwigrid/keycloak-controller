@@ -2,7 +2,7 @@ micronaut:
 
   # see https://docs.micronaut.io/latest/guide/configurationreference.html#io.micronaut.runtime.ApplicationConfiguration
   application:
-    name: keycloak-client-controller
+    name: keycloak-controller
 
 # see https://docs.micronaut.io/latest/guide/#providedEndpoints
 endpoints:
