@@ -4,7 +4,7 @@
 
 	<groupId>com.kiwigrid.controller</groupId>
 	<artifactId>keycloak-client-controller</artifactId>
-	<version>0.1</version>
+	<version>1.0</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>
@@ -27,6 +27,10 @@
 			<name>Axel Köhler</name>
 			<email>axel.koehler@kiwigrid.com</email>
 		</developer>
+		<developer>
+			<name>Stephan Schnabel</name>
+			<email>stephan.schnabel@kiwigrid.com</email>
+		</developer>
 	</developers>
 
 	<scm>
@@ -41,9 +45,10 @@
 		<version.micronaut-test-spock>1.0.2</version.micronaut-test-spock>
 		<version.keycloak>4.8.3.Final</version.keycloak>
 		<version.resteasy>3.6.3.Final</version.resteasy>
-		<!-- More recent version comes with newer OkHttpClient, which will result in connection errors -->
-		<version.k8s-client>4.0.0</version.k8s-client>
-		<version.lombok>1.18.6</version.lombok>
+		<version.logback>1.2.3</version.logback>
+		<version.logback-contrib>0.1.5</version.logback-contrib>
+		<version.k8s-client>4.2.0</version.k8s-client>
+		<version.lombok>1.18.8</version.lombok>
 		<version.com.spotify.ile>1.4.10</version.com.spotify.ile>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,10 +87,31 @@
 			<artifactId>micronaut-runtime</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.micronaut</groupId>
+			<artifactId>micronaut-http-server-netty</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.2.3</version>
-			<scope>runtime</scope>
+			<version>${version.logback}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback.contrib</groupId>
+			<artifactId>logback-jackson</artifactId>
+			<version>${version.logback-contrib}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback.contrib</groupId>
+			<artifactId>logback-json-classic</artifactId>
+			<version>${version.logback-contrib}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<!--  reuse version from micronaut -->
+			<version>1.7.25</version>
 		</dependency>
 
 		<!-- Keycloak -->
@@ -115,6 +141,18 @@
 			<groupId>io.fabric8</groupId>
 			<artifactId>kubernetes-client</artifactId>
 			<version>${version.k8s-client}</version>
+		</dependency>
+
+		<!-- Monitoring -->
+		<dependency>
+			<groupId>io.micronaut.configuration</groupId>
+			<artifactId>micronaut-micrometer-registry-prometheus</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.micronaut</groupId>
+			<artifactId>micronaut-management</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Lazy Developer -->
@@ -173,6 +211,14 @@
 								<version>${version.micronaut}</version>
 							</path>
 						</annotationProcessorPaths>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.1.0</version>
+					<configuration>
+						<skip>false</skip>
 					</configuration>
 				</plugin>
 

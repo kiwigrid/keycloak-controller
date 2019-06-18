@@ -2,86 +2,75 @@
 
 [![Build Status](https://travis-ci.com/kiwigrid/keycloak-client-controller.svg?branch=master)](https://travis-ci.com/kiwigrid/keycloak-client-controller)
 
-This controller manage Keycloak clients over Kubernetes resources and creates a Kubernetes secret with 
+This controller manage Keycloak clients and realms over Kubernetes resources and creates a Kubernetes secret with 
 the `clientSecret` for clients of type `confidential`.
- 
-The secret will be named like the the `KeycloakClientRegistration` resource with suffix `-secret` (e.g. `kcr-sample-secret` from _Examples_ section)
 
+Within the cluster, multiple Keycloak instances can be referenced. This become useful in a multi-tenant environment where different services
+has to be registered at different Keycloak instances.
+ 
 ## Setup
 
-Before deploying the controller, create the [CustomResourceDefinition](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/)
+Before deploying the controller, create the [CustomResourceDefinition](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/):
 
 ```bash
-kubectl apply -f keycloakClientCreationCRD.yaml
-```
-
-```yaml
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: keycloakclientregistrations.k8s.kiwigrid.com
-  labels:
-    app: keycloak-client-controller
-spec:
-  group: k8s.kiwigrid.com
-  version: v1beta1
-  scope: Namespaced
-  names:
-    plural: keycloakclientregistrations
-    singular: keycloakclientregistration
-    kind: KeycloakClientRegistration
-    shortNames:
-      - kcr
-  validation:
-    openAPIV3Schema:
-      properties:
-        spec:
-          properties:
-            realm:
-              type: string
-            clientId:
-              type: string
-            accessType:
-              type: string
-              enum:
-                - public
-                - confidential
-                - bearer-only
-            redirectUris:
-              items:
-                type: string
-              type: array
-            webOrigins:
-              items:
-                type: string
-              type: array
-            serviceAccountsEnabled:
-              type: boolean
-          required:
-            - realm
-            - clientId
-            - accessType
-            - redirectUris
-            - webOrigins
-          type: object
-        status:
-          type: object
+kubectl apply -f src/main/k8s/
 ```
 
 ## Examples
 
+See sub-dir `examples` for more sophisticated samples.
+
+### Keycloak
+
 ```yaml
 apiVersion: k8s.kiwigrid.com/v1beta1
-kind: KeycloakClientRegistration
+kind: Keycloak
 metadata:
-  name: kcr-sample
+  name: keycloak-instance-example
 spec:
+  url: https://keycloak.example.com/auth
   realm: master
+  clientId: admin-cli
+  username: admin
+  passwordSecretName: keycloak-http
+```
+
+### Realm
+
+```yaml
+apiVersion: k8s.kiwigrid.com/v1beta1
+kind: KeycloakRealm
+metadata:
+  name: realm-example
+spec:
+  keycloak: keycloak-instance-example
+  realm: my-realm
+  roles:
+  - service
+  - admin
+  - operations
+```
+
+### Client
+
+```yaml
+apiVersion: k8s.kiwigrid.com/v1beta1
+kind: KeycloakClient
+metadata:
+  name: client-example
+spec:
+  keycloak: keycloak-instance-example
+  realm: my-realm
   clientId: client-example
-  accessType: confidential
-  serviceAccountsEnabled: true
-  redirectUris:
-    - "*"
-  webOrigins:
-    - "*"
+  clientType: public
+  directAccessGrantsEnabled: true
+  standardFlowEnabled: false
+  implicitFlowEnabled: false
+  mapper:
+  - name: example-service-audience
+    protocolMapper: oidc-audience-mapper
+    config:
+      claim.name: audience
+      access.token.claim: "true"
+      included.client.audience: my-service
 ```

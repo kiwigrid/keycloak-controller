@@ -1,9 +1,16 @@
 micronaut:
-    application:
-        name: keycloak-client-controller
 
-registrar:
-  keycloak:
-    url: http://localhost:8080/auth/
-    user: admin
-    pwd: admin
+  # see https://docs.micronaut.io/latest/guide/configurationreference.html#io.micronaut.runtime.ApplicationConfiguration
+  application:
+    name: ${project.artifactId}
+    version: ${project.version}
+
+# see https://docs.micronaut.io/latest/guide/#providedEndpoints
+endpoints:
+  all:
+    path: /endpoints
+
+# logging
+logging.level:
+  com.kiwigrid: TRACE
+  io.fabric8.kubernetes.client.internal.VersionUsageUtils: ERROR
