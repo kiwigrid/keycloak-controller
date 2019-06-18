@@ -1,0 +1,71 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: keycloaks.k8s.kiwigrid.com
+spec:
+  group: k8s.kiwigrid.com
+  version: v1beta1
+  scope: Cluster
+  names:
+    kind: Keycloak
+    singular: keycloak
+    plural: keycloaks
+    shortNames: [ kc ]
+  additionalPrinterColumns:
+  - name: URL
+    type: string
+    description: The base url of Keycloak.
+    JSONPath: .spec.url
+  - name: TIMESTAMP
+    type: string
+    description: Timestamp of last validation.
+    JSONPath: .status.timestamp
+  - name: VERSION
+    type: string
+    description: Version of Keycloak if available.
+    JSONPath: .status.version
+  - name: ERROR
+    type: string
+    description: Error message is keycloak not available.
+    JSONPath: .status.error
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          type: object
+          required:
+          - url
+          properties:
+            url:
+              description: 'Base URL of Keycloak, e.g. https://keycloak.example.org/auth.'
+              type: string
+              format: uri
+            realm:
+              description: 'Realm for API operations, default: master'
+              type: string
+            clientId:
+              description: 'ClientId for API operations, default: admin-cli'
+              type: string
+            username:
+              description: 'Username for API operations, default: admin'
+              type: string
+            passwordSecretNamespace:
+              description: 'Namespace of secret with password for API operations, default: default'
+              type: string
+            passwordSecretName:
+              description: 'Name of secret with password for API operations, default: keycloak-http'
+              type: string
+            passwordSecretKey:
+              description: 'Key in secret with password for API operations, default: password'
+              type: string
+        status:
+          type: object
+          required:
+          - timestamp
+          properties:
+            timestamp:
+              type: string
+            version:
+              type: string
+            error:
+              type: string

@@ -1,0 +1,12 @@
+apiVersion: k8s.kiwigrid.com/v1beta1
+kind: Keycloak
+metadata:
+  name: fully-configured-keycloak
+spec:
+  url: https://keycloak.example.com/auth
+  realm: master
+  clientId: admin-cli
+  username: admin
+  passwordSecretNamespace: infrastructure
+  passwordSecretName: keycloak-http
+  passwordSecretKey: password
