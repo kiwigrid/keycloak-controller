@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property resource="META-INF/build-info.properties" />
+
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<withJansi>true</withJansi>
+		<encoder>
+			<pattern>%cyan(%d{HH:mm:ss.SSS}) %gray(%-10.10thread) %highlight(%-5level) %magenta(%60logger{60}) %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class="com.kiwigrid.keycloak.client.controller.logging.StackdriverJsonLayout">
+				<serviceName>${serviceName}</serviceName>
+				<serviceVersion>${serviceVersion}</serviceVersion>
+			</layout>
+		</encoder>
+	</appender>
+
+	<property name="APPENDER" value="CONSOLE"/>
+	<if condition='isDefined("GCP_LOGGING")'>
+		<then>
+			<property name="APPENDER" value="CONSOLE_JSON"/>
+		</then>
+	</if>
+
+	<root level="INFO">
+		<appender-ref ref="${APPENDER}"/>
+	</root>
+
+</configuration>

@@ -92,6 +92,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -112,6 +113,13 @@
 			<artifactId>jul-to-slf4j</artifactId>
 			<!--  reuse version from micronaut -->
 			<version>1.7.25</version>
+		</dependency>
+		<!-- The org.codehaus.janino:commons-compiler:3.0.6 dependency -->
+		<!-- will be automatically pulled in by Maven's transitivity rules -->
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>3.0.6</version>
 		</dependency>
 
 		<!-- Keycloak -->
@@ -323,6 +331,28 @@
 							<goal>build</goal>
 							<goal>tag</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- create build meta data -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>create-metadata</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+							<outputName>build-info.properties</outputName>
+							<timezone>UTC</timezone>
+							<applicationName>${project.artifactId}</applicationName>
+							<applicationPropertyName>serviceName</applicationPropertyName>
+							<versionPropertyName>serviceVersion</versionPropertyName>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
