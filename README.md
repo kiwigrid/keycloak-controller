@@ -15,6 +15,7 @@ Before deploying the controller, create the [CustomResourceDefinition](https://k
 ```bash
 kubectl apply -f src/main/k8s/
 ```
+The controller can then be deployed using [the corresponding helm chart](https://github.com/kiwigrid/helm-charts/tree/master/charts/keycloak-controller).
 
 ## Examples
 
