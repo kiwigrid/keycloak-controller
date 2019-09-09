@@ -7,6 +7,7 @@ import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.*;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.internal.KubernetesDeserializer;
+import io.micronaut.context.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,9 @@ public abstract class KubernetesController<T extends CustomResource> implements 
 	protected final KubernetesClient kubernetes;
 	protected final Map<String, T> resources = new HashMap<>();
 	protected final MixedOperation<T, ? extends CustomResourceList<T>, ?, ?> customResources;
+
+	@Value("${controller.namespaced:true}")
+	protected boolean namespaced;
 
 	protected KubernetesController(KubernetesClient kubernetes,
 			CustomResourceDefinition crd,
@@ -39,7 +43,10 @@ public abstract class KubernetesController<T extends CustomResource> implements 
 
 	public Watch watch() {
 		log.trace("Start watcher.");
-		return customResources.watch(this);
+		if(namespaced) {
+			return customResources.watch(this);
+		}
+		return customResources.inAnyNamespace().watch(this);
 	}
 
 	@Override
