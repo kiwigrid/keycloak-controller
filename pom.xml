@@ -47,7 +47,7 @@
 		<version.resteasy>3.6.3.Final</version.resteasy>
 		<version.logback>1.2.3</version.logback>
 		<version.logback-contrib>0.1.5</version.logback-contrib>
-		<version.k8s-client>4.2.0</version.k8s-client>
+		<version.k8s-client>4.3.1</version.k8s-client>
 		<version.lombok>1.18.8</version.lombok>
 		<version.com.spotify.ile>1.4.10</version.com.spotify.ile>
 

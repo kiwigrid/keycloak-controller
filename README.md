@@ -5,8 +5,12 @@
 This controller manage Keycloak clients and realms over Kubernetes resources and creates a Kubernetes secret with 
 the `clientSecret` for clients of type `confidential`.
 
-Within the cluster, multiple Keycloak instances can be referenced. This become useful in a multi-tenant environment where different services
+Within the cluster, multiple Keycloak instances can be referenced.
+This become useful in a multi-tenant environment where different services
 has to be registered at different Keycloak instances.
+
+By default, the controller watches only for events in its namespace.
+To enable watching in all namespaces set environment variable `CONTROLLER_NAMESPACED=false`.
  
 ## Setup
 

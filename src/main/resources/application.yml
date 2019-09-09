@@ -13,3 +13,7 @@ endpoints:
 logging.level:
   com.kiwigrid: TRACE
   io.fabric8.kubernetes.client.internal.VersionUsageUtils: ERROR
+
+controller:
+  ## Controls whether controller watch only for events in its namespace
+  namespaced: true
