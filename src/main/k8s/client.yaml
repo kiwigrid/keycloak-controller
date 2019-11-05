@@ -88,6 +88,10 @@ spec:
               type: array
               items:
                 type: string
+            redirectUris:
+              type: array
+              items:
+                type: string
             webOrigins:
               type: array
               items:

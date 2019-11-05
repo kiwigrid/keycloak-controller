@@ -54,6 +54,7 @@ public class ClientResource extends CustomResource {
 		private List<String> defaultClientScopes = new ArrayList<>();
 		private List<String> optionalClientScopes = new ArrayList<>();
 		private List<String> webOrigins = new ArrayList<>();
+		private List<String> redirectUris = new ArrayList<>();
 		private String secretNamespace;
 		private String secretName;
 		private String secretKey = "secret";

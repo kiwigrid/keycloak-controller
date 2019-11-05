@@ -216,6 +216,10 @@ public class ClientController extends KubernetesController<ClientResource> {
 			client.setOptionalClientScopes(spec.getOptionalClientScopes());
 		}
 
+		if (changed |= changed(create, spec, "redirectUris", spec.getRedirectUris(), client.getRedirectUris())) {
+			client.setRedirectUris(spec.getRedirectUris());
+		}
+
 		if (changed |= changed(create, spec, "webOrigins", spec.getWebOrigins(), client.getWebOrigins())) {
 			client.setWebOrigins(spec.getWebOrigins());
 		}
