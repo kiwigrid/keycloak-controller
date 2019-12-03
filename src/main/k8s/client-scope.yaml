@@ -1,0 +1,93 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+  kind: CustomResourceDefinition
+  metadata:
+    name: keycloakclientscopes.k8s.kiwigrid.com
+  spec:
+    group: k8s.kiwigrid.com
+    version: v1beta1
+    scope: Namespaced
+    names:
+      kind: KeycloakClientScope
+      singular: keycloakclientscope
+      plural: keycloakclientscopes
+      shortNames: [ kccs ]
+    additionalPrinterColumns:
+      - name: KEYCLOAK
+        type: string
+        description: The ID for referencing the Keycloak.
+        JSONPath: .spec.keycloak
+      - name: REALM
+        type: string
+        description: The realm of the client.
+        JSONPath: .spec.realm
+      - name: ID
+        type: string
+        description: The id of the client scope.
+        JSONPath: .spec.id
+      - name: TIMESTAMP
+        type: string
+        description: The timestamp of the realm.
+        JSONPath: .status.timestamp
+      - name: ERROR
+        type: string
+        description: The error of the realm.
+        JSONPath: .status.error
+    validation:
+      openAPIV3Schema:
+        properties:
+          spec:
+            type: object
+            required:
+              - realm
+            properties:
+              keycloak:
+                description: 'Name of Keycloak to use, defaults to: keycloak'
+                type: string
+              realm:
+                description: 'Name of realm to create client scope in'
+                type: string
+              id:
+                description: 'Id of client scope to create'
+                type: string
+              name:
+                description: 'Name of client scope for Keycloak'
+                type: string
+              description:
+                description: 'Client scope description'
+                type: string
+              protocol:
+                description: 'Client scope protocol'
+                type: string
+              mapper:
+                description: 'Protocol mappers to use'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    protocolMapper:
+                      type: string
+                    config:
+                      type: object
+                      additionalProperties:
+                        type: string
+              attributes:
+                description: 'Client scope attributes'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    value:
+                      type: string
+          status:
+            type: object
+            required:
+              - timestamp
+            properties:
+              timestamp:
+                type: string
+              error:
+                type: string

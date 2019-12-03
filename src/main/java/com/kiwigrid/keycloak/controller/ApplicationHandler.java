@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.kiwigrid.keycloak.controller.client.ClientController;
+import com.kiwigrid.keycloak.controller.clientscope.ClientScopeController;
 import com.kiwigrid.keycloak.controller.keycloak.KeycloakController;
 import com.kiwigrid.keycloak.controller.realm.RealmController;
 import io.fabric8.kubernetes.client.Watch;
@@ -20,12 +21,14 @@ public class ApplicationHandler {
 	final KeycloakController keycloakController;
 	final RealmController realmController;
 	final ClientController clientController;
+	final ClientScopeController clientScopeController;
 
 	@Scheduled(fixedRate = "${retry-rate:60s}")
 	void retry() {
 		keycloakController.retry();
 		realmController.retry();
 		clientController.retry();
+		clientScopeController.retry();
 	}
 
 	@PostConstruct
@@ -33,6 +36,7 @@ public class ApplicationHandler {
 		watches.add(keycloakController.watch());
 		watches.add(realmController.watch());
 		watches.add(clientController.watch());
+		watches.add(clientScopeController.watch());
 	}
 
 	@PreDestroy
