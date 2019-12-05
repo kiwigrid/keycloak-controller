@@ -1,0 +1,17 @@
+apiVersion: k8s.kiwigrid.com/v1beta1
+kind: KeycloakClientScope
+metadata:
+  name: client-scope-example
+spec:
+  keycloak: fully-configured-keycloak
+  realm: food-realm
+  name: client-scope-example
+  mapper:
+    - name: scope-group-mapper-example
+      protocolMapper: oidc-script-based-protocol-mapper
+      config:
+        claim.name: tenant
+        access.token.claim: "true"
+        jsonType.label: String
+        script: |-
+          realm.getName();
