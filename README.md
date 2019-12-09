@@ -21,6 +21,8 @@ kubectl apply -f src/main/k8s/
 ```
 The controller can then be deployed using [the corresponding helm chart](https://github.com/kiwigrid/helm-charts/tree/master/charts/keycloak-controller).
 
+The Docker container can be found here: https://hub.docker.com/r/kiwigrid/keycloak-controller
+
 ## Examples
 
 See sub-dir `examples` for more sophisticated samples.
