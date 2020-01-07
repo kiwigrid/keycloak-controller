@@ -60,6 +60,7 @@ public class ClientResource extends CustomResource {
 		private String secretKey = "secret";
 		private List<ClientMapper> mapper = new ArrayList<>();
 		private List<ClientRole> roles = new ArrayList<>();
+		private List<String> serviceAccountRealmRoles = new ArrayList<>();
 	}
 
 	@lombok.Getter

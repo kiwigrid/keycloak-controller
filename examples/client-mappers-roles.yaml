@@ -18,6 +18,8 @@ spec:
         - service
         - admin
         - grandmaster
+  serviceAccountRealmRoles:
+    - editor
   mapper:
     - name: audience
       protocolMapper: oidc-audience-mapper
