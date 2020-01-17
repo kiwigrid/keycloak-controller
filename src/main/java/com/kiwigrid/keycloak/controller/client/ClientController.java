@@ -7,6 +7,7 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RoleMappingResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.representations.idm.MappingsRepresentation;
 import org.keycloak.representations.idm.ProtocolMapperRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 
@@ -352,28 +353,25 @@ public class ClientController extends KubernetesController<ClientResource> {
 		var realm = clientResource.getSpec().getRealm();
 		var clientId = clientResource.getSpec().getClientId();
 
-		org.keycloak.admin.client.resource.ClientResource keycloakClientResource = realmResource.clients().get(clientUuid);
-		RolesResource clientRolesResource = keycloakClientResource.roles();
-		List<RoleRepresentation> clientRoleRepresentations = clientRolesResource.list();
-		List<String> requestedRealmRoles = clientResource.getSpec().getServiceAccountRealmRoles();
 
-		RoleMappingResource realmRolesMapping = realmResource.users()
+		org.keycloak.admin.client.resource.ClientResource keycloakClientResource = realmResource.clients().get(clientUuid);
+		RoleMappingResource serviceAccountRolesMapping = realmResource.users()
 				.get(keycloakClientResource.getServiceAccountUser().getId())
 				.roles();
 
-		removeRoleMappingNotRequestedAnymore(keycloak, realm, clientId, realmRolesMapping, clientRoleRepresentations, requestedRealmRoles);
+		List<String> requestedRealmRoles = clientResource.getSpec().getServiceAccountRealmRoles();
+
+		removeRoleMappingNotRequestedAnymore(keycloak, realm, clientId, serviceAccountRolesMapping, requestedRealmRoles);
 
 		List<String> realmRoleNames = realmResource.roles().list().stream().map(RoleRepresentation::getName).collect(Collectors.toList());
 		List<String> rolesToCreate = requestedRealmRoles.stream().filter(role -> !realmRoleNames.contains(role)).collect(Collectors.toList());
 		createRolesInRealm(keycloak, realm, clientId, realmResource.roles(), rolesToCreate);
 
-		// add mapping
 		List<RoleRepresentation> rolesToBind = realmResource.roles().list().stream()
 				.filter(roleInRealm -> requestedRealmRoles.contains(roleInRealm.getName()))
 				.collect(Collectors.toList());
 
-
-		realmRolesMapping
+		serviceAccountRolesMapping
 				.realmLevel()
 				.add(rolesToBind);
 	}
@@ -389,13 +387,15 @@ public class ClientController extends KubernetesController<ClientResource> {
 		}
 	}
 
-	private void removeRoleMappingNotRequestedAnymore(String keycloak, String realm, String clientId, RoleMappingResource serviceAccountRoleMapping, List<RoleRepresentation> roleRepresentations, List<String> requestedRealmRoles) {
+	private void removeRoleMappingNotRequestedAnymore(String keycloak, String realm, String clientId, RoleMappingResource serviceAccountRoleMapping, List<String> requestedRealmRoles) {
 		List rolesToRemove = new ArrayList();
-		for (RoleRepresentation roleRepresentation : roleRepresentations) {
-			if (!requestedRealmRoles.contains(roleRepresentation.getName())) {
-				rolesToRemove.add(roleRepresentation);
+
+		List<RoleRepresentation> currentlyMappedRealmRoles = serviceAccountRoleMapping.getAll().getRealmMappings();
+		for (RoleRepresentation currentlyMappedRole : currentlyMappedRealmRoles) {
+			if (!requestedRealmRoles.contains(currentlyMappedRole.getName())) {
+				rolesToRemove.add(currentlyMappedRole);
 				log.info("{}/{}/{}: deleted role not requested anymore {}",
-						keycloak, realm, clientId, roleRepresentation.getName());
+						keycloak, realm, clientId, currentlyMappedRole.getName());
 			}
 		}
 		serviceAccountRoleMapping
