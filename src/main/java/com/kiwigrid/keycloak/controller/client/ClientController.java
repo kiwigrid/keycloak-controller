@@ -1,26 +1,29 @@
 package com.kiwigrid.keycloak.controller.client;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.kiwigrid.keycloak.controller.KubernetesController;
 import com.kiwigrid.keycloak.controller.keycloak.KeycloakController;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.RoleMappingResource;
-import org.keycloak.admin.client.resource.RolesResource;
-import org.keycloak.representations.idm.ClientRepresentation;
-import org.keycloak.representations.idm.MappingsRepresentation;
-import org.keycloak.representations.idm.ProtocolMapperRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
-
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.RoleMappingResource;
+import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.representations.idm.ProtocolMapperRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 
 @Singleton
 public class ClientController extends KubernetesController<ClientResource> {
@@ -352,7 +355,6 @@ public class ClientController extends KubernetesController<ClientResource> {
 		var keycloak = clientResource.getSpec().getKeycloak();
 		var realm = clientResource.getSpec().getRealm();
 		var clientId = clientResource.getSpec().getClientId();
-
 
 		org.keycloak.admin.client.resource.ClientResource keycloakClientResource = realmResource.clients().get(clientUuid);
 		RoleMappingResource serviceAccountRolesMapping = realmResource.users()
