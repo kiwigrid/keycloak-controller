@@ -74,14 +74,7 @@ spec:
                       type: string
             attributes:
               description: 'Client scope attributes'
-              type: array
-              items:
-                type: object
-                properties:
-                  key:
-                    type: string
-                  value:
-                    type: string
+              type: object
         status:
           type: object
           required:
