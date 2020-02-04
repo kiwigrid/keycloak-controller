@@ -56,7 +56,7 @@ public class ClientScopeController extends KubernetesController<ClientScopeResou
 			if (optionalClientScopeRepresentation.isEmpty()) {
 				ClientScopeRepresentation clientRepresentation = new ClientScopeRepresentation();
 				clientRepresentation.setProtocol("openid-connect");
-				clientRepresentation.setId(clientScopeName);
+				clientRepresentation.setName(clientScopeName);
 				map(clientScopeResource.getSpec(), clientRepresentation, true);
 				clientUuid = getId(clientScopesResource.create(clientRepresentation));
 				log.info("{}/{}/{}: created client scope", keycloak, realmName, clientScopeName);
