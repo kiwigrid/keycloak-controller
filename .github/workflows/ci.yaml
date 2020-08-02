@@ -52,4 +52,4 @@ jobs:
       - name: build docker image
         run: .github/docker-build.sh
       - name: test keycloak-controller
-        run: .github/ci.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}
+        run: .github/k8s-install.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}
