@@ -1,0 +1,55 @@
+name: ci
+
+on: 
+  pull_request:
+
+jobs:
+  lint-bash-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Lint Bash scripts
+        uses: docker://koalaman/shellcheck-alpine:v0.7.0
+        with:
+          args: .github/lint-scripts.sh
+
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    needs: 
+      - lint-bash-scripts
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      HELM_VERSION: v3.2.4
+    strategy:
+      matrix:
+        k8s-version:
+         - v1.14.10
+         - v1.15.7
+         - v1.16.9
+         - v1.17.5
+         - v1.18.6
+        keycloak-chart:
+         # keycloak 9.0.0
+         - 7.7.1
+         # keycloak 10.0.0
+         - 8.3.0
+         # keycloak 11.0.0
+         - 9.0.1
+        keycloak-controller-chart:
+         # keycloak-controller 2.0.0
+         - 0.6.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch history
+        run: git fetch --prune --unshallow
+      - name: Create kind ${{ matrix.k8s-version }} cluster
+        uses: helm/kind-action@master
+        with:
+          config: .github/kind-config.yaml
+          node_image: kindest/node:${{ matrix.k8s-version }}
+      - name: test keycloak-controller
+        run: .github/ci.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}
