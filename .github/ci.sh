@@ -17,19 +17,6 @@ echo "keycloak chart version:             ${KEYCLOAK_CHART_VERSION}"
 echo "keycloak-controller chart version:  ${KEYCLOAK_CONTROLLER_CHART_VERSION}"
 echo ""
 
-echo -e "\n##### install mvn & java #####\n"
-sudo apt-get update > /dev/null
-sudo apt-get install -y maven openjdk-11-jdk > /dev/null
-
-echo -e "\n##### build keycloak-controller #####\n"
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-mvn package --quiet
-
-echo -e "\n##### create docker image with tag ci-snapshot #####\n"
-docker build -t kiwigrid/keycloak-controller:ci-snapshot ./target
-echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-docker push kiwigrid/keycloak-controller:ci-snapshot
-
 echo -e "\n##### install kubectl #####\n"
 curl --silent --show-error --fail --location --output kubectl "https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
@@ -55,7 +42,7 @@ echo -e "\n##### install keycloak #####\n"
 helm upgrade -i keycloak codecentric/keycloak --wait --namespace "${NAMESPACE}" --version "${KEYCLOAK_CHART_VERSION}"
 
 echo -e "\n##### install keycloak-controller #####\n"
-helm upgrade -i keycloak-controller kiwigrid/keycloak-controller --wait --namespace "${NAMESPACE}" --version "${KEYCLOAK_CONTROLLER_CHART_VERSION}" --set image.tag=ci-snapshot
+helm upgrade -i keycloak-controller kiwigrid/keycloak-controller --wait --namespace "${NAMESPACE}" --version "${KEYCLOAK_CONTROLLER_CHART_VERSION}" --set image.repository=keycloak-controller --set image.tag=ci-snapshot
 
 echo -e "\n##### install keycloak-controller crds #####\n"
 while IFS= read -r CRD; do
