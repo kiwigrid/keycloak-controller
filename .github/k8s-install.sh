@@ -62,9 +62,13 @@ done < <(find examples -type f)
 
 echo -e "\n##### show keycloak-controller examples #####\n"
 kubectl -n "${NAMESPACE}" get keycloakclients.k8s.kiwigrid.com
+echo ""
 kubectl -n "${NAMESPACE}" get keycloakclientscopes.k8s.kiwigrid.com
+echo ""
 kubectl -n "${NAMESPACE}" get keycloakrealms.k8s.kiwigrid.com
+echo ""
 kubectl -n "${NAMESPACE}" get keycloaks.k8s.kiwigrid.com
+echo ""
 
 echo -e "\n##### check for errors in keycloak-controller logs #####\n"
 sleep 60
