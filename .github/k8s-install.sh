@@ -55,9 +55,5 @@ kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/key
 kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloakrealms.k8s.kiwigrid.com
 kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloaks.k8s.kiwigrid.com
 
-# kubectl get -A keycloakclients.k8s.kiwigrid.com
-# kubectl get -A keycloakclientscopes.k8s.kiwigrid.com
-# kubectl get -A keycloakrealms.k8s.kiwigrid.com
-# kubectl get -A keycloaks.k8s.kiwigrid.com
-
-k logs -n infra -l app.kubernetes.io/name=keycloak-controller -f| grep ERROR
+echo -e "\n##### show keycloak-controller logs #####\n"
+kubectl -n "${NAMESPACE}" logs -l app.kubernetes.io/name=keycloak-controller
