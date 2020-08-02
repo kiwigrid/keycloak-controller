@@ -47,13 +47,24 @@ helm upgrade -i keycloak-controller kiwigrid/keycloak-controller --wait --namesp
 echo -e "\n##### install keycloak-controller crds #####\n"
 while IFS= read -r CRD; do
     kubectl apply -f "${CRD}"
-done < <(find src/main/k8s/ -type f)
+done < <(find src/main/k8s -type f)
 
 echo -e "\n##### test controller crds #####\n"
 kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloakclients.k8s.kiwigrid.com
 kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloakclientscopes.k8s.kiwigrid.com
 kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloakrealms.k8s.kiwigrid.com
 kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloaks.k8s.kiwigrid.com
+
+echo -e "\n##### install keycloak-controller examples #####\n"
+while IFS= read -r KEYCLOAK_EXAMPLE; do
+    kubectl -n "${NAMESPACE}" apply -f "${KEYCLOAK_EXAMPLE}"
+done < <(find examples -type f)
+
+echo -e "\n##### show keycloak-controller examples #####\n"
+kubectl -n "${NAMESPACE}" get keycloakclients.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" get keycloakclientscopes.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" get keycloakrealms.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" get keycloaks.k8s.kiwigrid.com
 
 echo -e "\n##### show keycloak-controller logs #####\n"
 kubectl -n "${NAMESPACE}" logs -l app.kubernetes.io/name=keycloak-controller
