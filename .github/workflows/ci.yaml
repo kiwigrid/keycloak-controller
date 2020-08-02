@@ -20,8 +20,6 @@ jobs:
     needs: 
       - lint-bash-scripts
     env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       HELM_VERSION: v3.2.4
     strategy:
       matrix:
@@ -51,5 +49,7 @@ jobs:
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s-version }}
+      - name: build docker image
+        run: .github/docker-build.sh
       - name: test keycloak-controller
-        run: .github/ci.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}
+        run: .github/k8s-install.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}

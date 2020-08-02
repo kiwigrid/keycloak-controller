@@ -17,19 +17,6 @@ echo "keycloak chart version:             ${KEYCLOAK_CHART_VERSION}"
 echo "keycloak-controller chart version:  ${KEYCLOAK_CONTROLLER_CHART_VERSION}"
 echo ""
 
-echo -e "\n##### install mvn & java #####\n"
-sudo apt-get update > /dev/null
-sudo apt-get install -y maven openjdk-11-jdk > /dev/null
-
-echo -e "\n##### build keycloak-controller #####\n"
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-mvn package --quiet
-
-echo -e "\n##### create docker image with tag ci-snapshot #####\n"
-docker build -t kiwigrid/keycloak-controller:ci-snapshot ./target
-echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-docker push kiwigrid/keycloak-controller:ci-snapshot
-
 echo -e "\n##### install kubectl #####\n"
 curl --silent --show-error --fail --location --output kubectl "https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
@@ -55,15 +42,40 @@ echo -e "\n##### install keycloak #####\n"
 helm upgrade -i keycloak codecentric/keycloak --wait --namespace "${NAMESPACE}" --version "${KEYCLOAK_CHART_VERSION}"
 
 echo -e "\n##### install keycloak-controller #####\n"
-helm upgrade -i keycloak-controller kiwigrid/keycloak-controller --wait --namespace "${NAMESPACE}" --version "${KEYCLOAK_CONTROLLER_CHART_VERSION}" --set image.tag=ci-snapshot
+helm upgrade -i keycloak-controller kiwigrid/keycloak-controller --wait --namespace "${NAMESPACE}" --version "${KEYCLOAK_CONTROLLER_CHART_VERSION}" --set image.repository=keycloak-controller --set image.tag=ci-snapshot
 
 echo -e "\n##### install keycloak-controller crds #####\n"
 while IFS= read -r CRD; do
     kubectl apply -f "${CRD}"
-done < <(find src/main/k8s/ -type f)
+done < <(find src/main/k8s -type f)
 
 echo -e "\n##### test controller crds #####\n"
-kubectl get -A keycloakclients.k8s.kiwigrid.com
-kubectl get -A keycloakclientscopes.k8s.kiwigrid.com
-kubectl get -A keycloakrealms.k8s.kiwigrid.com
-kubectl get -A keycloaks.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloakclients.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloakclientscopes.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloakrealms.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloaks.k8s.kiwigrid.com
+
+echo -e "\n##### install keycloak-controller examples #####\n"
+while IFS= read -r KEYCLOAK_EXAMPLE; do
+    kubectl -n "${NAMESPACE}" apply -f "${KEYCLOAK_EXAMPLE}"
+done < <(find examples -type f)
+
+echo -e "\n##### show keycloak-controller examples #####\n"
+kubectl -n "${NAMESPACE}" get keycloakclients.k8s.kiwigrid.com
+echo ""
+kubectl -n "${NAMESPACE}" get keycloakclientscopes.k8s.kiwigrid.com
+echo ""
+kubectl -n "${NAMESPACE}" get keycloakrealms.k8s.kiwigrid.com
+echo ""
+kubectl -n "${NAMESPACE}" get keycloaks.k8s.kiwigrid.com
+echo ""
+
+echo -e "\n##### check for errors in keycloak-controller logs #####\n"
+kubectl -n "${NAMESPACE}" logs -l app.kubernetes.io/name=keycloak-controller &
+sleep 150
+if kubectl -n "${NAMESPACE}" logs -l app.kubernetes.io/name=keycloak-controller | grep -q ERROR; then
+    echo "errors found in logs"
+    exit 1
+else
+    echo "no errors found in logs"
+fi
