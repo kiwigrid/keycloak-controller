@@ -50,10 +50,10 @@ while IFS= read -r CRD; do
 done < <(find src/main/k8s -type f)
 
 echo -e "\n##### test controller crds #####\n"
-kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloakclients.k8s.kiwigrid.com
-kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloakclientscopes.k8s.kiwigrid.com
-kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloakrealms.k8s.kiwigrid.com
-kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=60s crd/keycloaks.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloakclients.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloakclientscopes.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloakrealms.k8s.kiwigrid.com
+kubectl -n "${NAMESPACE}" wait --for condition=established --timeout=15s crd/keycloaks.k8s.kiwigrid.com
 
 echo -e "\n##### install keycloak-controller examples #####\n"
 while IFS= read -r KEYCLOAK_EXAMPLE; do
