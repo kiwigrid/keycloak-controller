@@ -14,24 +14,11 @@ jobs:
         with:
           args: .github/lint-scripts.sh
 
-  docker-build:
-    name: docker-build
-    runs-on: ubuntu-latest
-    needs: 
-      - lint-bash-scripts
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Fetch history
-        run: git fetch --prune --unshallow
-      - name: build docker image
-        run: .github/docker-build.sh
-
   ci:
     name: ci
     runs-on: ubuntu-latest
     needs: 
-      - docker-build
+      - lint-bash-scripts
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -64,5 +51,7 @@ jobs:
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s-version }}
+      - name: build docker image
+        run: .github/docker-build.sh
       - name: test keycloak-controller
         run: .github/ci.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}
