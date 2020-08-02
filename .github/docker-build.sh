@@ -19,4 +19,3 @@ docker build -t "${DOCKER_TAG}" ./target
 
 echo -e "\n##### push docker image to kind nodes #####\n"
 kind load docker-image "${DOCKER_TAG}"
-
