@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy-docker-container:
-    name: deploy-chart
+    name: deploy-docker-container
     runs-on: ubuntu-latest
     env: 
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
