@@ -43,7 +43,7 @@
 	<properties>
 		<version.micronaut>1.1.0.RC2</version.micronaut>
 		<version.micronaut-test-spock>1.0.2</version.micronaut-test-spock>
-		<version.keycloak>9.0.0</version.keycloak>
+		<version.keycloak>11.0.0</version.keycloak>
 		<version.resteasy>3.6.3.Final</version.resteasy>
 		<version.logback>1.2.3</version.logback>
 		<version.logback-contrib>0.1.5</version.logback-contrib>
