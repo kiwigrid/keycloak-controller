@@ -29,5 +29,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: kiwigrid/keycloak-controller
-          dockerfile: ./target
+          dockerfile: ./target/Dockerfile
           tag_with_ref: true
