@@ -1,0 +1,33 @@
+name: deploy
+
+on:
+  push:
+    branches: [master]
+  release:
+    types: [published]
+
+jobs:
+  deploy-docker-container:
+    name: deploy-chart
+    runs-on: ubuntu-latest
+    env: 
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMG: ""
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Lint Bash scripts
+        uses: docker://koalaman/shellcheck-alpine:v0.7.0
+        with:
+          args: .github/lint-scripts.sh
+      - name: build mvn
+        run: .github/mvn-build.sh
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: kiwigrid/keycloak-controller
+          dockerfile: ./target
+          tag_with_ref: true
