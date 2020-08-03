@@ -49,7 +49,9 @@ jobs:
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s-version }}
-      - name: build docker image
+      - name: mvn build
+        run: .github/mvn-build.sh
+      - name: build docker image & push to kind nodes
         run: .github/docker-build.sh
       - name: test keycloak-controller
         run: .github/k8s-install.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}
