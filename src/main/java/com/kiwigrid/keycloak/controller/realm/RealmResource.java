@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.fabric8.kubernetes.api.builder.Function;
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinitionBuilder;
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinitionSpec;
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinitionStatus;
+import io.fabric8.kubernetes.api.model.apiextensions.v1beta1.CustomResourceDefinition;
+import io.fabric8.kubernetes.api.model.apiextensions.v1beta1.CustomResourceDefinitionBuilder;
+import io.fabric8.kubernetes.api.model.apiextensions.v1beta1.CustomResourceDefinitionSpec;
+import io.fabric8.kubernetes.api.model.apiextensions.v1beta1.CustomResourceDefinitionStatus;
 import io.fabric8.kubernetes.client.CustomResource;
 import io.fabric8.kubernetes.client.CustomResourceDoneable;
 import io.fabric8.kubernetes.client.CustomResourceList;
