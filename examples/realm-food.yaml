@@ -1,11 +1,11 @@
 apiVersion: k8s.kiwigrid.com/v1beta1
 kind: KeycloakRealm
 metadata:
-  name: realm-example
+  name: food-realm
 spec:
   keycloak: fully-configured-keycloak
-  realm: realm-example
+  realm: food-realm
   roles:
-  - service
   - admin
-  - operations
+  - member
+  - service
