@@ -41,8 +41,8 @@
 	</scm>
 
 	<properties>
-		<version.micronaut>1.1.0.RC2</version.micronaut>
-		<version.micronaut-test-spock>1.0.2</version.micronaut-test-spock>
+		<version.micronaut>1.3.7</version.micronaut>
+		<version.micronaut-test-spock>1.2.3</version.micronaut-test-spock>
 		<version.keycloak>11.0.0</version.keycloak>
 		<version.resteasy>3.6.3.Final</version.resteasy>
 		<version.logback>1.2.3</version.logback>
