@@ -42,19 +42,17 @@
 
 	<properties>
 		<version.micronaut>1.3.7</version.micronaut>
-		<version.micronaut-test-spock>1.0.2</version.micronaut-test-spock>
-		<version.keycloak>11.0.0</version.keycloak>
+		<version.micronaut-test-spock>1.2.3</version.micronaut-test-spock>
+		<version.keycloak>11.0.2</version.keycloak>
 		<version.resteasy>3.6.3.Final</version.resteasy>
 		<version.logback>1.2.3</version.logback>
 		<version.logback-contrib>0.1.5</version.logback-contrib>
 		<version.k8s-client>4.10.3</version.k8s-client>
-		<version.lombok>1.18.8</version.lombok>
+		<version.lombok>1.18.12</version.lombok>
 		<version.com.spotify.ile>1.4.10</version.com.spotify.ile>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.parameters>true</maven.compiler.parameters>
 
 		<dockerfile.contextDirectory>${project.build.directory}</dockerfile.contextDirectory>
@@ -200,7 +198,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.7.0</version>
+					<version>3.8.0</version>
 					<configuration>
 						<annotationProcessorPaths>
 							<path>
@@ -219,6 +217,7 @@
 								<version>${version.micronaut}</version>
 							</path>
 						</annotationProcessorPaths>
+						<release>11</release>
 					</configuration>
 				</plugin>
 

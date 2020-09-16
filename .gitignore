@@ -4,3 +4,4 @@ target/
 .idea/
 /dependency-reduced-pom.xml
 .attach_pid*
+.gradle
