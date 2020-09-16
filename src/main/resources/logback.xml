@@ -34,4 +34,6 @@
 		<appender-ref ref="${APPENDER}"/>
 	</root>
 
+	<logger name="io.micronaut.core.reflect" level="trace" />
+
 </configuration>
