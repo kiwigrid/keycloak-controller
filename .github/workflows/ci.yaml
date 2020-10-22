@@ -20,37 +20,46 @@ jobs:
     needs: 
       - lint-bash-scripts
     env:
-      HELM_VERSION: v3.2.4
+      HELM_VERSION: v3.3.4
     strategy:
       matrix:
         k8s-version:
          - v1.14.10
-         - v1.15.7
-         - v1.16.9
-         - v1.17.5
-         - v1.18.6
+         - v1.15.12
+         - v1.16.15
+         - v1.17.11
+         - v1.18.8
+         - v1.19.1
         keycloak-chart:
-         # keycloak 9.0.0
-         - 7.7.1
-         # keycloak 10.0.0
-         - 8.3.0
-         # keycloak 11.0.0
          - 9.0.1
         keycloak-controller-chart:
          - 0.6.1
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Fetch history
-        run: git fetch --prune --unshallow
+      - name: provision
+        run: |
+          .github/ci.provision.kubernetes.sh ${{ matrix.k8s-version }} & \
+          .github/ci.provision.helm.sh $HELM_VERSION & \
+          .github/ci.provision.maven.sh & \
+          wait
+      - name: maven
+        run: .github/ci.maven.sh
       - name: Create kind ${{ matrix.k8s-version }} cluster
         uses: helm/kind-action@master
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s-version }}
-      - name: mvn build
-        run: .github/mvn-build.sh
       - name: build docker image & push to kind nodes
-        run: .github/docker-build.sh
-      - name: test keycloak-controller
-        run: .github/k8s-install.sh ${{ matrix.keycloak-chart }} ${{ matrix.keycloak-controller-chart }} ${{ matrix.k8s-version }}
+        run: .github/ci.docker-build.sh
+      - name: helm
+        run: .github/ci.helm.sh
+      - name: keycloak and keycloak controller
+        run: |
+          .github/ci.keycloak.sh ${{ matrix.keycloak-chart }} & \
+          .github/ci.keycloak-controller.sh ${{ matrix.keycloak-controller-chart }} & \
+          wait
+      - name: examples
+        run: .github/ci.example.sh
+      - name: verify
+        run: .github/ci.verify.sh

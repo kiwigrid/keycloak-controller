@@ -1,0 +1,11 @@
+apiVersion: k8s.kiwigrid.com/v1beta1
+kind: KeycloakRealm
+metadata:
+  name: fully-configured-realm
+spec:
+  keycloak: fully-configured-keycloak
+  realm: fully-configured-realm
+  roles:
+  - service
+  - admin
+  - operations

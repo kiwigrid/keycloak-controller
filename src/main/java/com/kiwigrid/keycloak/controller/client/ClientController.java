@@ -264,15 +264,21 @@ public class ClientController extends KubernetesController<ClientResource> {
 		// get secret from keycloak / kubernetes
 
 		var keycloakSecretValue = realmResource.clients().get(clientUuid).getSecret().getValue();
-		var kubernetesSecretResource = kubernetes.secrets().inNamespace(secretNamespace).withName(secretName);
+		var kubernetesSecretsInNamespace = kubernetes.secrets().inNamespace(secretNamespace);
+		var kubernetesSecretResource = kubernetesSecretsInNamespace.withName(secretName);
 		var kubernetesSecret = kubernetesSecretResource.get();
 
 		// create secret if not found
 
 		if (kubernetesSecret == null) {
-			kubernetesSecretResource.create(kubernetesSecretResource.createNew().withNewMetadata()
-					.withNamespace(secretNamespace).withName(secretName).withResourceVersion(null).and()
-					.addToData(secretKey, Base64.getEncoder().encodeToString(keycloakSecretValue.getBytes())).done());
+
+			kubernetesSecretsInNamespace.createOrReplaceWithNew()
+				.withNewMetadata()
+				.withName(secretName)
+				.endMetadata()
+				.addToData(secretKey, Base64.getEncoder().encodeToString(keycloakSecretValue.getBytes()))
+				.done();
+
 			log.info("{}/{}/{}: kubernetes secret {}/{} created",
 					keycloak, realm, clientId, secretNamespace, secretName);
 			return;

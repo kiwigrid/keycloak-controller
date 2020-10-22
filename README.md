@@ -81,3 +81,77 @@ spec:
       access.token.claim: "true"
       included.client.audience: my-service
 ```
+
+# Development
+
+To test the controller using the same process as Github Actions from a blank container, install `act`:
+
+```
+brew install act
+```
+
+And then trigger the pull request action:
+
+```
+act pull_request -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
+```
+
+## Machine Setup
+
+To run Keycloak Controller locally some of the same scripts that power the Github Actions can be used, but you'll want to provision your machine locally instead, as you most likely don't want to delete all your installs and builds for every single change, or change your local environment in a forceful manner - such as installing versions of a tool that conflicts with another local tool you are using.
+
+The tools you'll need to make sure are installed are `kubectl`, `helm`, `kind`, `java`, and `maven`.
+
+Please look at their official documentation to find how to install each.
+
+Once they are installed you can run the various ci scripts:
+
+Here is an example of running the full pipeline, parallelized where possible - of course you could run them ad-hoc in any order that makes sense:
+
+###### Setup
+
+Build `.jar` and run a Kubernetes cluster in Docker:
+
+```sh
+bash .github/local.maven.sh &
+bash .github/local.kind.sh &
+wait
+```
+
+Build docker image using .jar from previous step, and get Helm ready:
+
+```sh
+bash .github/ci.docker-build.sh &
+bash .github/ci.helm.sh &
+wait
+```
+
+Install Keycloak and Keycloak Controller configured to use the image produced and uploaded to Kind in the last step:
+
+```sh
+bash .github/ci.keycloak.sh "9.0.1" & \
+bash .github/ci.keycloak-controller.sh "0.6.1" & \
+wait
+```
+
+###### Run Examples
+
+```
+bash .github/ci.example.sh &&
+bash .github/ci.verify.sh
+```
+
+###### Make changes and see them running in Kubernetes
+
+```
+bash .github/local.maven.sh &&
+bash .github/ci.docker-build.sh &&
+kubectl rollout restart deployment -n keycloak keycloak-controller && 
+kubectl rollout status deployment -n keycloak keycloak-controller
+```
+
+###### Teardown
+
+```
+kind delete clusters chart-testing
+```
