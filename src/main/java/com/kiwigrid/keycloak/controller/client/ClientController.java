@@ -271,7 +271,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 		if (kubernetesSecret == null) {
 			kubernetesSecretResource.create(kubernetesSecretResource.createNew().withNewMetadata()
-					.withNamespace(secretNamespace).withName(secretName).withResourceVersion(null).and()
+					.withNamespace(secretNamespace).withName(secretName).and()
 					.addToData(secretKey, Base64.getEncoder().encodeToString(keycloakSecretValue.getBytes())).done());
 			log.info("{}/{}/{}: kubernetes secret {}/{} created",
 					keycloak, realm, clientId, secretNamespace, secretName);
