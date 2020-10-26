@@ -23,7 +23,7 @@ public class ApplicationHandler {
 	final ClientController clientController;
 	final ClientScopeController clientScopeController;
 
-	@Scheduled(fixedRate = "${retry-rate:60s}")
+	@Scheduled(fixedRate = "${retry-rate:10s}")
 	void retry() {
 		keycloakController.retry();
 		realmController.retry();

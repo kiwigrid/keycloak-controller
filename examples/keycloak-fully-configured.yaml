@@ -3,10 +3,10 @@ kind: Keycloak
 metadata:
   name: fully-configured-keycloak
 spec:
-  url: https://keycloak.example.com/auth
+  url: http://keycloak-http.keycloak.svc.cluster.local/auth
   realm: master
   clientId: admin-cli
-  username: admin
-  passwordSecretNamespace: infrastructure
-  passwordSecretName: keycloak-http
+  username: keycloak
+  passwordSecretNamespace: keycloak
+  passwordSecretName: keycloak-auth
   passwordSecretKey: password

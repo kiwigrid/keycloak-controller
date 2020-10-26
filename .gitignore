@@ -4,3 +4,8 @@ target/
 .idea/
 /dependency-reduced-pom.xml
 .attach_pid*
+.classpath
+.factorypath
+.project
+.settings
+.vscode

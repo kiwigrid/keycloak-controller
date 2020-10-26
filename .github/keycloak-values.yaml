@@ -1,0 +1,15 @@
+extraEnv: |
+  - name: KEYCLOAK_USER_FILE
+    value: /secrets/keycloak-auth/username
+  - name: KEYCLOAK_PASSWORD_FILE
+    value: /secrets/keycloak-auth/password
+  - name: PROXY_ADDRESS_FORWARDING
+    value: "true"
+extraVolumeMounts: |
+  - name: keycloak-auth
+    mountPath: /secrets/keycloak-auth
+    readOnly: true
+extraVolumes: |
+  - name: keycloak-auth
+    secret:
+      secretName: keycloak-auth

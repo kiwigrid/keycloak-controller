@@ -1,11 +1,11 @@
 apiVersion: k8s.kiwigrid.com/v1beta1
 kind: KeycloakClientScope
 metadata:
-  name: client-scope-example
+  name: fully-configured-clientscope
 spec:
   keycloak: fully-configured-keycloak
-  realm: food-realm
-  name: client-scope-example
+  realm: fully-configured-realm
+  name: fully-configured-clientscope
   mapper:
     - name: scope-group-mapper-example
       protocolMapper: oidc-script-based-protocol-mapper
