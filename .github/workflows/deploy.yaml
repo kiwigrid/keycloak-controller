@@ -21,8 +21,10 @@ jobs:
         uses: docker://koalaman/shellcheck-alpine:v0.7.0
         with:
           args: .github/lint-scripts.sh
-      - name: build mvn
-        run: .github/mvn-build.sh
+      - name: provision maven
+        run: .github/ci.provision.maven.sh
+      - name: build maven
+        run: .github/ci.maven.sh
       - name: Build and push Docker images
         uses: docker/build-push-action@v1
         with:
