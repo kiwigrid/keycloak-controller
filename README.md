@@ -1,6 +1,6 @@
 # keycloak-controller
 
-[![Build Status](https://travis-ci.com/kiwigrid/keycloak-controller.svg?branch=master)](https://travis-ci.com/kiwigrid/keycloak-controller)
+![deploy](https://github.com/kiwigrid/keycloak-controller/workflows/deploy/badge.svg)
 
 This controller manage Keycloak clients and realms over Kubernetes resources and creates a Kubernetes secret with 
 the `clientSecret` for clients of type `confidential`.
