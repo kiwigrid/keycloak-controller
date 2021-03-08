@@ -61,7 +61,15 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 			// hand client basics
 
-			var optionalClientRepresentation = realmResource.clients().findByClientId(clientId).stream().findFirst();
+			List<ClientRepresentation> clients = realmResource.clients().findByClientId(clientId);
+			if(clients.size() > 1) {
+				String error = "At least one client with client id " + clientId + " already exists.";
+				log.error(keycloak + "/" + realm + "/" + clientId + ": " + error);
+				updateStatus(clientResource, error);
+				return;
+			}
+
+			var optionalClientRepresentation = clients.stream().findFirst();
 			if (optionalClientRepresentation.isEmpty()) {
 				var clientRepresentation = new ClientRepresentation();
 				clientRepresentation.setProtocol("openid-connect");
