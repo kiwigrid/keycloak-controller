@@ -63,9 +63,8 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 			List<ClientRepresentation> clients = realmResource.clients().findByClientId(clientId);
 			if(clients.size() > 1) {
-				String error = "At least one client with client id " + clientId + " already exists.";
-				log.error(keycloak + "/" + realm + "/" + clientId + ": " + error);
-				updateStatus(clientResource, error);
+				log.error("{}/{}/{}: Creating client failed because it already exists", keycloak, realm, clientId);
+				updateStatus(clientResource, "Client already exists");
 				return;
 			}
 
