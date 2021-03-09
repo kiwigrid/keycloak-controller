@@ -61,14 +61,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 			// hand client basics
 
-			List<ClientRepresentation> clients = realmResource.clients().findByClientId(clientId);
-			if(clients.size() > 1) {
-				log.error("{}/{}/{}: Creating client failed because it already exists", keycloak, realm, clientId);
-				updateStatus(clientResource, "Client already exists");
-				return;
-			}
-
-			var optionalClientRepresentation = clients.stream().findFirst();
+			var optionalClientRepresentation = realmResource.clients().findByClientId(clientId).stream().findFirst();
 			if (optionalClientRepresentation.isEmpty()) {
 				var clientRepresentation = new ClientRepresentation();
 				clientRepresentation.setProtocol("openid-connect");
@@ -77,6 +70,21 @@ public class ClientController extends KubernetesController<ClientResource> {
 				clientUuid = getId(realmResource.clients().create(clientRepresentation));
 				log.info("{}/{}/{}: created client", keycloak, realm, clientId);
 			} else {
+
+				long countMatchingClientResources = customResources.list().getItems().stream()
+						.filter(cr -> cr.getSpec().getClientId().equals(clientResource.getSpec().getClientId()))
+						.filter(cr -> cr.getMetadata().getNamespace().equals(clientResource.getMetadata().getNamespace()))
+						.count();
+				if(countMatchingClientResources == 0) {
+					log.error(
+							"{}/{}/{}: The given client is already managed by another ClientResource in a different namespace",
+							keycloak,
+							realm,
+							clientId);
+					updateStatus(clientResource, "Another ClientResource already manages the given client");
+					return;
+				}
+
 				var clientRepresentation = optionalClientRepresentation.get();
 				clientUuid = clientRepresentation.getId();
 				if (map(false, clientResource.getSpec(), clientRepresentation)) {
