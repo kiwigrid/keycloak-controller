@@ -29,11 +29,16 @@ import org.keycloak.representations.idm.RoleRepresentation;
 public class ClientController extends KubernetesController<ClientResource> {
 
 	final KeycloakController keycloak;
+	final AssignedClientScopesSyncer assignedClientScopesSyncer;
 
-	public ClientController(KeycloakController keycloak, KubernetesClient kubernetes) {
+	public ClientController(KeycloakController keycloak,
+			KubernetesClient kubernetes,
+			AssignedClientScopesSyncer assignedClientScopesSyncer) {
+
 		super(kubernetes, ClientResource.DEFINITION, ClientResource.class, ClientResource.ClientResourceList.class,
 				ClientResource.ClientResourceDoneable.class);
 		this.keycloak = keycloak;
+		this.assignedClientScopesSyncer = assignedClientScopesSyncer;
 	}
 
 	@Override
@@ -85,6 +90,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 			}
 			manageMapper(realmResource, clientUuid, clientResource);
 			manageRoles(realmResource, clientUuid, clientResource);
+			assignedClientScopesSyncer.manageClientScopes(realmResource, clientUuid, clientResource);
 
 			if (clientResource.getSpec().getServiceAccountsEnabled() == Boolean.TRUE) {
 				manageServiceAccountRealmRoles(realmResource, clientUuid, clientResource);
