@@ -50,6 +50,7 @@
 		<version.lombok>1.18.16</version.lombok>
 		<version.com.spotify.ile>1.4.10</version.com.spotify.ile>
 		<version.janino>3.1.2</version.janino>
+		<version.mockito>3.7.7</version.mockito>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -183,6 +184,13 @@
 					<artifactId>tools</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${version.mockito}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
