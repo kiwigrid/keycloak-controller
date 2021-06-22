@@ -46,7 +46,7 @@ jobs:
       - name: maven
         run: .github/ci.maven.sh
       - name: Create kind ${{ matrix.k8s-version }} cluster
-        uses: helm/kind-action@master
+        uses: helm/kind-action@main
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s-version }}
