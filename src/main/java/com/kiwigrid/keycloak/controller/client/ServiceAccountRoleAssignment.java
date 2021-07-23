@@ -3,12 +3,14 @@ package com.kiwigrid.keycloak.controller.client;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Singleton;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RoleMappingResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class ServiceAccountRoleAssignment {
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 
