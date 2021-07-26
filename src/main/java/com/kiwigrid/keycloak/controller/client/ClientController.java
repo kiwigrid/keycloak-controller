@@ -2,7 +2,6 @@ package com.kiwigrid.keycloak.controller.client;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
@@ -19,8 +18,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.RoleMappingResource;
-import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.ProtocolMapperRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -97,6 +94,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 			if (clientResource.getSpec().getServiceAccountsEnabled() == Boolean.TRUE) {
 				manageServiceAccountRealmRoles(realmResource, clientUuid, clientResource);
+
 			}
 			updateStatus(clientResource, null);
 		} catch (RuntimeException e) {
@@ -368,7 +366,7 @@ public class ClientController extends KubernetesController<ClientResource> {
 
 	private void manageServiceAccountRealmRoles(RealmResource realmResource, String clientUuid, ClientResource clientResource) {
 
-		this.serviceAccountRoleAssignmentSynchronizer.manageServiceAccountRealmRoles(realmResource, clientResource, clientUuid);
+		this.serviceAccountRoleAssignmentSynchronizer.synchronizeServiceAccountRealmRoles(realmResource, clientResource, clientUuid);
 
 	}
 

@@ -56,7 +56,7 @@ public class ServiceAccountRoleAssignmentSynchronizerTest {
 				serviceAccountRoleAssignment);
 
 		// Act
-		synchronizer.manageServiceAccountRealmRoles(realmResource, k8sClientResourceDefinition, CLIENT_UUID);
+		synchronizer.synchronizeServiceAccountRealmRoles(realmResource, k8sClientResourceDefinition, CLIENT_UUID);
 
 		// Assert/Verify
 		verifyNoInteractions(rolesResource, roleScopeResource);
@@ -91,7 +91,7 @@ public class ServiceAccountRoleAssignmentSynchronizerTest {
 		var synchronizer = new ServiceAccountRoleAssignmentSynchronizer(serviceAccountRoleAssignment);
 
 		// Act
-		synchronizer.manageServiceAccountRealmRoles(realmResource, k8sClientResource, CLIENT_UUID);
+		synchronizer.synchronizeServiceAccountRealmRoles(realmResource, k8sClientResource, CLIENT_UUID);
 
 		// Assert
 		InOrder inOrder = Mockito.inOrder(roleScopeResource, rolesResource);
@@ -135,7 +135,7 @@ public class ServiceAccountRoleAssignmentSynchronizerTest {
 				serviceAccountRoleAssignment);
 
 		// Act
-		synchronizer.manageServiceAccountRealmRoles(realmResource, k8sClientResourceDefinition, CLIENT_UUID);
+		synchronizer.synchronizeServiceAccountRealmRoles(realmResource, k8sClientResourceDefinition, CLIENT_UUID);
 
 		InOrder inOrder = Mockito.inOrder(roleScopeResource, rolesResource);
 		inOrder.verify(roleScopeResource, times(0)).remove(anyList());

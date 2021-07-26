@@ -19,7 +19,7 @@ public class ServiceAccountRoleAssignmentSynchronizer {
 		this.serviceAccountRoleAssignment = serviceAccountRoleAssignment;
 	}
 
-	public void manageServiceAccountRealmRoles(RealmResource realmResource, ClientResource clientResourceDefinition, String clientUuid) {
+	public void synchronizeServiceAccountRealmRoles(RealmResource realmResource, ClientResource clientResourceDefinition, String clientUuid) {
 		var keycloak = clientResourceDefinition.getSpec().getKeycloak();
 		var realm = clientResourceDefinition.getSpec().getRealm();
 		var clientId = clientResourceDefinition.getSpec().getClientId();
