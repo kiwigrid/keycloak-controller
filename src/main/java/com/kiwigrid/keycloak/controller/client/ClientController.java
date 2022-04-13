@@ -102,6 +102,8 @@ public class ClientController extends KubernetesController<ClientResource> {
 			if (e instanceof WebApplicationException) {
 				var response = WebApplicationException.class.cast(e).getResponse();
 				error = "Keycloak returned " + response.getStatus() + " with: " + response.readEntity(String.class);
+			} else {
+				log.error("RuntimeException: " + e);
 			}
 			log.error(keycloak + "/" + realm + "/" + clientId + ": " + error);
 			updateStatus(clientResource, error);
