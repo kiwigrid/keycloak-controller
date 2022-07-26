@@ -19,8 +19,7 @@ public class KeycloakController extends KubernetesController<KeycloakResource> {
 	final Map<String, Keycloak> clients = new HashMap<>();
 
 	public KeycloakController(KubernetesClient kubernetes) {
-		super(kubernetes, KeycloakResource.DEFINITION,
-				KeycloakResource.class, KeycloakResource.KeycloakResourceList.class, KeycloakResource.KeycloakResourceDoneable.class);
+		super(kubernetes, KeycloakResource.class);
 	}
 
 	@Override
@@ -28,6 +27,10 @@ public class KeycloakController extends KubernetesController<KeycloakResource> {
 
 		var name = resource.getMetadata().getName();
 		var status = resource.getStatus();
+		if (status == null) {
+			status = new KeycloakResourceStatus();
+			resource.setStatus(status);
+		}
 
 		try {
 
@@ -38,11 +41,10 @@ public class KeycloakController extends KubernetesController<KeycloakResource> {
 			log.info("Connected to {} in version {}.", name, status.getVersion());
 
 		} catch (RuntimeException e) {
-
+			log.error(e.getMessage(), e);
 			delete(resource);
 			updateStatus(resource, resource.getStatus().getVersion(), e.getMessage());
 			log.warn("Connecting to {} failed: {}", name, status.getError());
-
 		}
 	}
 
@@ -56,14 +58,14 @@ public class KeycloakController extends KubernetesController<KeycloakResource> {
 
 	@Override
 	public void retry() {
-		customResources.list().getItems().stream()
-				.filter(r -> r.getStatus().getError() != null)
+		customResources.inAnyNamespace().list().getItems().stream()
+				.filter(r -> r.getStatus() != null && r.getStatus().getError() != null)
 				.forEach(this::apply);
 	}
 
 	public Optional<Keycloak> get(String keycloak) {
 		if (!clients.containsKey(keycloak)) {
-			customResources.list().getItems().stream()
+			customResources.inAnyNamespace().list().getItems().stream()
 					.filter(r -> r.getMetadata().getName().equals(keycloak))
 					.forEach(this::apply);
 		}
@@ -73,6 +75,10 @@ public class KeycloakController extends KubernetesController<KeycloakResource> {
 	// internal
 
 	void updateStatus(KeycloakResource resource, String version, String error) {
+
+		if (resource.getStatus() == null) {
+			resource.setStatus(new KeycloakResourceStatus());
+		}
 
 		// skip if nothing changed
 
@@ -87,7 +93,8 @@ public class KeycloakController extends KubernetesController<KeycloakResource> {
 		resource.getStatus().setError(error);
 		resource.getStatus().setTimestamp(Instant.now().truncatedTo(ChronoUnit.SECONDS).toString());
 		resource.getStatus().setVersion(version);
-		customResources.withName(resource.getMetadata().getName()).replace(resource);
+
+		kubernetes.resource(resource).replace();
 	}
 
 	Keycloak connect(KeycloakResource resource) {

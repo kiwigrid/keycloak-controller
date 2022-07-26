@@ -1,7 +1,7 @@
 package com.kiwigrid.keycloak.controller;
 
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
@@ -17,6 +17,6 @@ public class Application {
 	@Singleton
 	@Bean(preDestroy = "close")
 	KubernetesClient kubernetesClient() {
-		return new DefaultKubernetesClient();
+		return new KubernetesClientBuilder().build();
 	}
 }

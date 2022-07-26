@@ -3,34 +3,39 @@ package com.kiwigrid.keycloak.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.client.*;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
+import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import io.micronaut.context.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class KubernetesController<T extends CustomResource> implements Watcher<T> {
+public abstract class KubernetesController<T extends CustomResource<?, ?>> implements Watcher<T> {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	protected final KubernetesClient kubernetes;
 	protected final Map<String, T> resources = new HashMap<>();
-	protected final MixedOperation<T, ? extends CustomResourceList<T>, ?, ?> customResources;
+	protected final MixedOperation<T, KubernetesResourceList<T>, Resource<T>> customResources;
 
 	@Value("${controller.namespaced:true}")
 	protected boolean namespaced;
 
-	protected KubernetesController(KubernetesClient kubernetes,
-			CustomResourceDefinition crd,
-			Class<T> type,
-			Class<? extends CustomResourceList<T>> listType,
-			Class<? extends CustomResourceDoneable<T>> doneableType) {
+	protected KubernetesController(
+		KubernetesClient kubernetes,
+		Class<T> type
+	) {
 		this.kubernetes = kubernetes;
-		this.customResources = kubernetes.customResources(crd, type, listType, doneableType);
+		this.customResources = kubernetes.resources(type);
+
+		CustomResourceDefinitionContext context = CustomResourceDefinitionContext.fromCustomResourceType(type);
+
 		KubernetesDeserializer.registerCustomKind(
-				crd.getSpec().getGroup() + "/" + crd.getSpec().getVersion(),
-				crd.getSpec().getNames().getKind(), type);
+				context.getGroup() + "/" + context.getVersion(),
+				context.getKind(), 
+				type);
 	}
 
 	public abstract void apply(T resource);
@@ -43,7 +48,7 @@ public abstract class KubernetesController<T extends CustomResource> implements 
 
 	public Watch watch() {
 		log.trace("Start watcher.");
-		if(namespaced) {
+		if (namespaced) {
 			return customResources.watch(this);
 		}
 		return customResources.inAnyNamespace().watch(this);
@@ -51,7 +56,6 @@ public abstract class KubernetesController<T extends CustomResource> implements 
 
 	@Override
 	public void eventReceived(Action action, T resource) {
-
 		var id = resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName();
 		log.trace("Received event {} for {}.", action, id);
 
@@ -73,7 +77,7 @@ public abstract class KubernetesController<T extends CustomResource> implements 
 	}
 
 	@Override
-	public void onClose(KubernetesClientException cause) {
+	public void onClose(WatcherException cause) {
 		if (cause != null) {
 			log.error("Unexpectedly closed watcher.", cause);
 		}

@@ -29,8 +29,7 @@ public class ClientScopeController extends KubernetesController<ClientScopeResou
 	private final KeycloakController keycloak;
 
 	public ClientScopeController(KeycloakController keycloak, KubernetesClient kubernetes) {
-		super(kubernetes, ClientScopeResource.DEFINITION, ClientScopeResource.class, ClientScopeResource.ClientScopeResourceList.class,
-				ClientScopeResource.ClientScopeResourceDoneable.class);
+		super(kubernetes, ClientScopeResource.class);
 		this.keycloak = keycloak;
 	}
 
@@ -83,13 +82,18 @@ public class ClientScopeController extends KubernetesController<ClientScopeResou
 	}
 
 	void updateStatus(ClientScopeResource clientScopeResource, String error) {
+		if (clientScopeResource.getStatus() == null) {
+			clientScopeResource.setStatus(new ClientScopeResourceStatus());
+		}
+
 		if (isOldErrorStatus(clientScopeResource, error)) {
 			return;
 		}
 
 		clientScopeResource.getStatus().setError(error);
 		clientScopeResource.getStatus().setTimestamp(Instant.now().truncatedTo(ChronoUnit.SECONDS).toString());
-		customResources.withName(clientScopeResource.getMetadata().getName()).replace(clientScopeResource);
+
+		kubernetes.resource(clientScopeResource).replace();
 	}
 
 	private boolean isOldErrorStatus(ClientScopeResource clientScopeResource, String error) {
@@ -104,15 +108,15 @@ public class ClientScopeController extends KubernetesController<ClientScopeResou
 
 		ProtocolMappersResource keycloakResource = clientScopesResource.get(clientScopeUuid).getProtocolMappers();
 		List<ProtocolMapperRepresentation> keycloakMappers = keycloakResource.getMappers();
-		List<ClientScopeResource.ClientScopeMapper> specMappers = clientScopeResource.getSpec().getMappers();
+		List<ClientScopeMapper> specMappers = clientScopeResource.getSpec().getMappers();
 
 		handleSpecMappers(keycloak, realm, clientScopeName, keycloakResource, keycloakMappers, specMappers);
 
 		removeObsoleteMappers(keycloak, realm, clientScopeName, keycloakResource, keycloakMappers, specMappers);
 	}
 
-	private void handleSpecMappers(String keycloak, String realm, String clientScopeName, ProtocolMappersResource keycloakResource, List<ProtocolMapperRepresentation> keycloakMappers, List<ClientScopeResource.ClientScopeMapper> specMappers) {
-		for (ClientScopeResource.ClientScopeMapper specMapper : specMappers) {
+	private void handleSpecMappers(String keycloak, String realm, String clientScopeName, ProtocolMappersResource keycloakResource, List<ProtocolMapperRepresentation> keycloakMappers, List<ClientScopeMapper> specMappers) {
+		for (ClientScopeMapper specMapper : specMappers) {
 			String mapperName = specMapper.getName();
 			Optional<ProtocolMapperRepresentation> protocolMapperOptional = keycloakMappers.stream().filter(m -> m.getName().equals(mapperName)).findFirst();
 			if (protocolMapperOptional.isEmpty()) {
@@ -137,8 +141,8 @@ public class ClientScopeController extends KubernetesController<ClientScopeResou
 		}
 	}
 
-	private void removeObsoleteMappers(String keycloak, String realm, String clientScopeName, ProtocolMappersResource keycloakResource, List<ProtocolMapperRepresentation> keycloakMappers, List<ClientScopeResource.ClientScopeMapper> specMappers) {
-		Set<String> names = specMappers.stream().map(ClientScopeResource.ClientScopeMapper::getName).collect(Collectors.toSet());
+	private void removeObsoleteMappers(String keycloak, String realm, String clientScopeName, ProtocolMappersResource keycloakResource, List<ProtocolMapperRepresentation> keycloakMappers, List<ClientScopeMapper> specMappers) {
+		Set<String> names = specMappers.stream().map(ClientScopeMapper::getName).collect(Collectors.toSet());
 		for (ProtocolMapperRepresentation mapper : keycloakMappers) {
 			if (!names.contains(mapper.getName())) {
 				keycloakResource.delete(mapper.getId());
@@ -205,11 +209,11 @@ public class ClientScopeController extends KubernetesController<ClientScopeResou
 	@Override
 	public void retry() {
 		customResources.list().getItems().stream()
-				.filter(r -> r.getStatus().getError() != null)
+				.filter(r -> r.getStatus() != null && r.getStatus().getError() != null)
 				.forEach(this::apply);
 	}
 
-	boolean map(ClientScopeResource.ClientScopeResourceSpec sourceSpec, ClientScopeRepresentation targetRepresentation, boolean create) {
+	boolean map(ClientScopeSpec sourceSpec, ClientScopeRepresentation targetRepresentation, boolean create) {
 		boolean changed = false;
 
 		if (changed |= changed(create, sourceSpec, "name", sourceSpec.getName(), targetRepresentation.getName())) {
@@ -231,7 +235,7 @@ public class ClientScopeController extends KubernetesController<ClientScopeResou
 		return changed;
 	}
 
-	boolean changed(boolean create, ClientScopeResource.ClientScopeResourceSpec spec, String name, Object specValue, Object clientValue) {
+	boolean changed(boolean create, ClientScopeSpec spec, String name, Object specValue, Object clientValue) {
 		boolean changed = specValue != null && !specValue.equals(clientValue);
 		if (changed) {
 			if (create) {

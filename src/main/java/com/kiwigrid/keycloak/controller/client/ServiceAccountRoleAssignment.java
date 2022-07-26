@@ -7,13 +7,9 @@ import javax.inject.Singleton;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RoleMappingResource;
 import org.keycloak.representations.idm.RoleRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class ServiceAccountRoleAssignment {
-	private final Logger LOG = LoggerFactory.getLogger(getClass());
-
 	public List<RoleRepresentation> findAssignedRolesToRemoveWith(RealmResource realmResource,
 			ClientResource clientResource, String clientUuid)
 	{
