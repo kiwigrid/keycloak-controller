@@ -132,7 +132,7 @@ public class AssignedClientScopesSyncerTest {
 	private com.kiwigrid.keycloak.controller.client.ClientResource createKubernetesClientResource(
 			List<String> defaultClientScopes, List<String> optionalClientScopes) {
 		com.kiwigrid.keycloak.controller.client.ClientResource clientResourceK8s = new com.kiwigrid.keycloak.controller.client.ClientResource();
-		clientResourceK8s.setSpec(new com.kiwigrid.keycloak.controller.client.ClientResource.ClientResourceSpec());
+		clientResourceK8s.setSpec(new com.kiwigrid.keycloak.controller.client.ClientSpec());
 		clientResourceK8s.getSpec().setDefaultClientScopes(defaultClientScopes);
 		clientResourceK8s.getSpec().setOptionalClientScopes(optionalClientScopes);
 		clientResourceK8s.getSpec().setRealm("realm");

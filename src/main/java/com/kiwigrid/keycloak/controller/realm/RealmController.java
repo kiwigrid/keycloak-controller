@@ -7,10 +7,9 @@ import java.util.stream.Collectors;
 
 import com.kiwigrid.keycloak.controller.KubernetesController;
 import com.kiwigrid.keycloak.controller.keycloak.KeycloakController;
-import com.kiwigrid.keycloak.controller.realm.RealmResource.RealmResourceDoneable;
-import com.kiwigrid.keycloak.controller.realm.RealmResource.RealmResourceList;
-import com.kiwigrid.keycloak.controller.realm.RealmResource.RealmResourceSpec;
+
 import io.fabric8.kubernetes.client.KubernetesClient;
+
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
@@ -24,8 +23,7 @@ public class RealmController extends KubernetesController<RealmResource> {
 	final KeycloakController keycloak;
 
 	public RealmController(KeycloakController keycloak, KubernetesClient kubernetes) {
-		super(kubernetes, RealmResource.DEFINITION, RealmResource.class, RealmResourceList.class,
-				RealmResourceDoneable.class);
+		super(kubernetes, RealmResource.class);
 		this.keycloak = keycloak;
 	}
 
@@ -81,7 +79,7 @@ public class RealmController extends KubernetesController<RealmResource> {
 	@Override
 	public void retry() {
 		customResources.list().getItems().stream()
-				.filter(r -> r.getStatus().getError() != null)
+				.filter(r -> r.getStatus() != null && r.getStatus().getError() != null)
 				.forEach(this::apply);
 	}
 
@@ -91,6 +89,10 @@ public class RealmController extends KubernetesController<RealmResource> {
 
 		// skip if nothing changed
 
+		if (resource.getStatus() == null) {
+			resource.setStatus(new RealmResourceStatus());
+		}
+
 		if (resource.getStatus().getTimestamp() != null && Objects.equals(resource.getStatus().getError(), error)) {
 			return;
 		}
@@ -99,10 +101,10 @@ public class RealmController extends KubernetesController<RealmResource> {
 
 		resource.getStatus().setError(error);
 		resource.getStatus().setTimestamp(Instant.now().truncatedTo(ChronoUnit.SECONDS).toString());
-		customResources.withName(resource.getMetadata().getName()).replace(resource);
+		kubernetes.resource(resource).replace();
 	}
 
-	void manageRealmRoles(Keycloak keycloak, RealmResourceSpec spec) {
+	void manageRealmRoles(Keycloak keycloak, RealmSpec spec) {
 
 		// no roles to handle?
 
