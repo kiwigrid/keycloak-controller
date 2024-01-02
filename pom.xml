@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.kiwigrid.controller</groupId>
+	<groupId>com.geoffo-dev.controller</groupId>
 	<artifactId>keycloak-controller</artifactId>
 	<version>1.0</version>
 
@@ -10,10 +10,10 @@
 	<description>
 		A Kubernetes controller for managing clients and realms in Keycloak instances.
 	</description>
-	<url>https://github.com/kiwigrid/keycloak-controller</url>
+	<url>https://github.com/geoffo-dev/keycloak-controller</url>
 	<organization>
 		<name>Kiwigrid GmbH</name>
-		<url>https://www.kiwigrid.com</url>
+		<url>https://www.geoffo-dev.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -34,9 +34,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/kiwigrid/keycloak-controller.git</connection>
-		<developerConnection>scm:git:git@github.com:kiwigrid/keycloak-controller.git</developerConnection>
-		<url>https://github.com/kiwigrid/keycloak-controller/tree/master</url>
+		<connection>scm:git:git://github.com/geoffo-dev/keycloak-controller.git</connection>
+		<developerConnection>scm:git:git@github.com:geoffo-dev/keycloak-controller.git</developerConnection>
+		<url>https://github.com/geoffo-dev/keycloak-controller/tree/master</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -63,7 +63,7 @@
 		<dockerfile.googleContainerRegistryEnabled>false</dockerfile.googleContainerRegistryEnabled>
 		<dockerfile.writeTestMetadata>false</dockerfile.writeTestMetadata>
 		<dockerfile.skipDockerInfo>true</dockerfile.skipDockerInfo>
-		<dockerfile.repository>kiwigrid/${project.artifactId}</dockerfile.repository>
+		<dockerfile.repository>geoffo-dev/${project.artifactId}</dockerfile.repository>
 		<!-- Automated versioning for docker image, this is our shippable artifact -->
 		<dockerfile.tag>${git.commit.time}.${git.commit.id.abbrev}</dockerfile.tag>
 
@@ -302,7 +302,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.kiwigrid.keycloak.controller.Application</mainClass>
+							<mainClass>com.geoffo-dev.keycloak.controller.Application</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
